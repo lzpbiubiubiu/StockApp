@@ -1,0 +1,23 @@
+module Component
+UIFocusArea			1.0 UIFocusArea.qml
+UIButton			1.0 UIButton.qml
+UIImageButton                   1.0 UIImageButton.qml
+UILabelButton                   1.0 UILabelButton.qml
+UILoading			1.0 UILoading.qml
+UIToast 			1.0 UIToast.qml
+UINumPad                        1.0 UINumPad.qml
+UIKeyButton                     1.0 UIKeyButton.qml
+UITextInput                     1.0 UITextInput.qml
+UIDialog                        1.0 UIDialog.qml
+UIDrawer                        1.0 UIDrawer.qml
+UITabView                       1.0 UITabView.qml
+UITab				1.0 UITab.qml
+UITabBar			1.0 UITabBar.qml
+UICheckBox                      1.0 UICheckBox.qml
+FunctionBar                     1.0 FunctionBar.qml
+PriceEditDialog                 1.0 PriceEditDialog.qml
+CheckoutOrderPanel              1.0 CheckoutOrderPanel.qml
+WarePresentationDialog          1.0 CheckoutOrderPanel.qml
+SettingIpDialog                 1.0 SettingIpDialog.qml
+GraphPanel                      1.0 GraphPanel.qml
+InputTextPanel                  1.0 InputTextPanel.qml

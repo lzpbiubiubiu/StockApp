@@ -1,0 +1,6 @@
+module Page
+Page			1.0 Page.qml
+MainPage		1.0 MainPage.qml
+SalePage		1.0 SalePage.qml
+StoragePage		1.0 StoragePage.qml
+ReportPage		1.0 ReportPage.qml

@@ -77,7 +77,7 @@ namespace UI
         m_mainWindow = new UI::MainWindow(m_qmlEngine);
 
         // 加载主页面
-        m_mainWindow->LoadPage("mainPage");
+        m_mainWindow->LoadPage("loginPage");
 
         // 显示主窗口
         m_mainWindow->Show();
