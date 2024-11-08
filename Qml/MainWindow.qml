@@ -76,7 +76,7 @@ ApplicationWindow {
         width: parent.width
         height: parent.height * 0.4
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 10
+        anchors.bottomMargin: 6
         visible: mainWindow.showNumPad
         onSignalCancelButtonClicked: {
             mainWindow.showNumPad = false

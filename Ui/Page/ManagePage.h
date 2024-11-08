@@ -4,15 +4,15 @@
 
 namespace UI
 {
-    class StoragePage : public Page
+    class ManagePage : public Page
     {
         Q_OBJECT
         DECLARE_PAGE()
 
     public:
-        Q_INVOKABLE StoragePage(QObject* parent = nullptr);
+        Q_INVOKABLE ManagePage(QObject* parent = nullptr);
 
-        virtual ~StoragePage();
+        virtual ~ManagePage();
 
     Q_SIGNALS:
 

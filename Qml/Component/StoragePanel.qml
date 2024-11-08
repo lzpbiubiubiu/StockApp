@@ -1,12 +1,14 @@
-import QtQml 2.12
+﻿import QtQml 2.12
 import QtQuick 2.12
 import QtQuick.Layouts 1.12
-import QtQuick.Controls 2.5
-import QtQuick.Controls.Styles 1.4
 import Component 1.0
 import Other 1.0
 
-Page {
+/**
+ * 商品入库面板
+ */
+
+UIDrawer {
     id: root
 
     /** 显示输入信息面板 */
@@ -14,70 +16,109 @@ Page {
 
     /** 当前tabView的序号 */
     property int __tabViewCurrentIndex: 0
-    Connections {
-        target: mainWindow
-        onPageIndexChanged: {
-            if(2 === mainWindow.pageIndex){
-                contentLoader.sourceComponent = null
-                contentLoader.sourceComponent = tabViewContent
-                root.__tabViewCurrentIndex = 0
-            }
-        }
-    }
-    Rectangle {
-        id: main
-        anchors.fill: parent
-        color: "transparent"
 
-        Loader {
-            id: contentLoader
-            anchors.fill: parent
-            anchors.topMargin: 20
-            sourceComponent: tabViewContent
-        }
-    }
+    width: parent.width
+    height: parent.height
+    color: "transparent"
+
+    edge: bottomEdge
+    closeOnClickOutside: true
+
+    //内容区域
+    contentItem: tabViewContent
 
     Component {
         id: tabViewContent
 
-        UITabView {
-            id: tabView
-            tabBarWidth: 204
-            tabHeight: 32
-            tabCheckboxWidth: 100
-            tabCheckboxHeight: 28
-            tabShowBackgroud: true
-            onCurrentIndexChanged: {
-                mainWindow.showNumPad = false
-                root.__tabViewCurrentIndex = currentIndex
-            }
-            UITab {
-               title: "新增"
-               sourceComponent: inputContent
+        Rectangle {
+            width: root.width
+            height: root.height * 0.95
+            radius: 8
+            clip: true
 
-               Component.onCompleted: {
-                   item.inputData = {}
-                   item.dataLsitModel = [{"inputDataKey": "code", "required": true, "tipText":"商品编码", "placeholderText":"请输入商品编码", "showKeybord": true, "regExp": "^[A-Za-z0-9]+$"},
-                                         {"inputDataKey": "name", "required": true, "tipText":"商品名称", "placeholderText":"请输入商品名称", "showKeybord": true, "regExp": ".*"},
-                                         {"inputDataKey": "stock", "required": true, "tipText":"商品库存", "placeholderText":"请输入商品库存", "showKeybord": false, "regExp": "^[0-9]+$"},
-                                         {"inputDataKey": "retailPrice", "required": true, "tipText":"商品零售价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"},
-                                         {"inputDataKey": "wholesalePrice", "required": true, "tipText":"商品批发价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"}]
-               }
-            }
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 0
 
-            UITab {
-                title: "更新"
-                sourceComponent: inputContent
-                Component.onCompleted: {
-                    item.inputData = {}
-                    item.dataLsitModel = [{"inputDataKey": "code", "required": true, "tipText":"商品编码", "placeholderText":"请输入商品编码", "showKeybord": true, "regExp": "^[A-Za-z0-9]+$"},
-                                          {"inputDataKey": "name", "required": true, "tipText":"商品名称", "placeholderText":"请输入商品名称", "showKeybord": true, "regExp": ".*"},
-                                          {"inputDataKey": "retailPrice", "required": true, "tipText":"商品零售价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"},
-                                          {"inputDataKey": "wholesalePrice", "required": true, "tipText":"商品批发价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"}]
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+
+                    Text {
+                        anchors.centerIn: parent
+                        width: parent.width - 50
+                        text: "商品入库"
+                        elide: Text.ElideRight
+                        font.family: UIConfig.fontFamily
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        color: "#000000"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    UIImageButton {
+                        id: cancelButton
+
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        width: 40
+                        height: 40
+                        anchors.verticalCenter: parent.verticalCenter
+                        imageSource: "qrc:/Resources/Images/panel_header_close.svg"
+                        imageHoverSource: "qrc:/Resources/Images/panel_header_close.svg"
+                        imagePressSource: "qrc:/Resources/Images/panel_header_close.svg"
+
+                        onSignalClicked: root.close()
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    UITabView {
+                        anchors.fill: parent
+                        id: tabView
+                        tabBarWidth: 204
+                        tabHeight: 32
+                        tabCheckboxWidth: 100
+                        tabCheckboxHeight: 28
+                        tabShowBackgroud: true
+                        onCurrentIndexChanged: {
+                            root.__tabViewCurrentIndex = currentIndex
+                        }
+                        UITab {
+                           title: "新增"
+                           sourceComponent: inputContent
+
+                           Component.onCompleted: {
+                               item.inputData = {}
+                               item.dataLsitModel = [{"inputDataKey": "code", "required": true, "tipText":"商品编码", "placeholderText":"请输入商品编码", "showKeybord": true, "regExp": "^[A-Za-z0-9]+$"},
+                                                     {"inputDataKey": "name", "required": true, "tipText":"商品名称", "placeholderText":"请输入商品名称", "showKeybord": true, "regExp": ".*"},
+                                                     {"inputDataKey": "stock", "required": true, "tipText":"商品库存", "placeholderText":"请输入商品库存", "showKeybord": false, "regExp": "^[0-9]+$"},
+                                                     {"inputDataKey": "retailPrice", "required": true, "tipText":"商品零售价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"},
+                                                     {"inputDataKey": "wholesalePrice", "required": true, "tipText":"商品批发价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"}]
+                           }
+                        }
+
+                        UITab {
+                            title: "更新"
+                            sourceComponent: inputContent
+                            Component.onCompleted: {
+                                item.inputData = {}
+                                item.dataLsitModel = [{"inputDataKey": "code", "required": true, "tipText":"商品编码", "placeholderText":"请输入商品编码", "showKeybord": true, "regExp": "^[A-Za-z0-9]+$"},
+                                                      {"inputDataKey": "name", "required": true, "tipText":"商品名称", "placeholderText":"请输入商品名称", "showKeybord": true, "regExp": ".*"},
+                                                      {"inputDataKey": "retailPrice", "required": true, "tipText":"商品零售价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"},
+                                                      {"inputDataKey": "wholesalePrice", "required": true, "tipText":"商品批发价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"}]
+                            }
+                        }
+                    }
                 }
             }
         }
     }
+
     Component {
         id: inputContent
         Rectangle {
@@ -98,7 +139,6 @@ Page {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 30 * listView.count + 12 * (listView.count - 1)
                     Layout.topMargin: 12
-                    Layout.bottomMargin: 8
                     model: dataLsitModel
 
                     cacheBuffer: 1000
@@ -148,24 +188,28 @@ Page {
                                     font.weight: Font.Bold
                                     placeholderText: modelData.placeholderText
                                     validator: RegExpValidator { regExp: new RegExp(modelData.regExp)}
-                                    textField.readOnly: "name" === modelData.inputDataKey ? true : false
-                                    activeFocusOnPress: false
+                                    //textField.readOnly: "name" === modelData.inputDataKey ? true : false
+                                    activeFocusOnPress: "name" === modelData.inputDataKey ? true : false
                                     onSignalOnClicked: {
                                         listView.currentIndex = index
                                         textInput.forceActiveFocus()
                                     }
                                     onSignalOnFocusChanged: {
-                                        if(activeFocus){
-                                            if("name" !== modelData.inputDataKey){
-                                                mainWindow.showNumPad = true
+                                        if("name" === modelData.inputDataKey){
+                                            if(activeFocus){
+                                                numPad.visible = false
+                                                rec.visible = true
+                                                itemId.visible = true
                                             }
                                             else{
-                                                if(!root.__showInputPanel){
-                                                    mainWindow.showNumPad = false
-                                                    rec.forceActiveFocus()
-                                                    root.showInputTextPanel(textInput)
-                                                    root.__showInputPanel = true
-                                                }
+                                                itemId.visible = false
+                                            }
+
+                                        }
+                                        else{
+                                            if(activeFocus){
+                                                numPad.visible = true
+                                                rec.visible = false
                                             }
                                         }
                                     }
@@ -203,7 +247,6 @@ Page {
                 }
 
                 Item {
-                    id: itemId
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                 }
@@ -238,57 +281,31 @@ Page {
                      }
                 }
 
-                Connections {
-                    target: mainWindow
-                    onShowNumPadChanged: {
-                        if(!mainWindow.showNumPad)
-                        {
-                            rec.forceActiveFocus()
-                        }
+                // 数字键盘
+                UINumPad {
+                    radius: 8
+                    id: numPad
+                    color: "white"
+                    visible: false
+                    Layout.preferredHeight: root.height * 0.35
+                    Layout.fillWidth: true
+                    Layout.bottomMargin: 8
+                    enterKeyText: "确定"
+                    cancelBtnText: "清除"
+                    onSignalCancelButtonClicked: {
+                        numPad.visible = false
+                        rec.visible = true
+                        rec.forceActiveFocus()
                     }
                 }
 
-                Connections {
-                    target: mainFrame
-                    onActiveFocusItemChanged: {
-                        if(mainFrame.activeFocusItem !== null && mainFrame.activeFocusItem instanceof TextField){
-                        }
-                    }
+                Item {
+                    id: itemId
+                    visible: false
+                    Layout.preferredHeight: root.height * 0.4
+                    Layout.fillWidth: true
                 }
             }
-        }
-    }
-
-    // 状态栏
-    footer: FunctionBar {
-        id: functionBar
-        implicitHeight: 51
-
-    }
-
-    /** 显示输入信息面板 */
-    function showInputTextPanel(textInput) {
-        if(textInput === 'undefined' || textInput instanceof TextField){
-            return
-        }
-        var json = {
-            "panelTitle": "输入商品名称",
-            "panelText": textInput.text,
-            "accept": function(text) {
-                textInput.text = text
-                root.__showInputPanel = false
-            },
-            "reject":function() {
-                root.__showInputPanel = false
-            }
-        }
-        var component = Qt.createComponent("qrc:/Qml/Component/InputTextPanel.qml")
-        if(component.status === Component.Ready) {
-            var object = component.createObject(parent, json)
-            object.anchors.fill = parent
-            object.open()
-        } else {
-            console.error(component.errorString())
         }
     }
 

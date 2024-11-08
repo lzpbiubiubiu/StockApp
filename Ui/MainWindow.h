@@ -34,8 +34,8 @@ namespace UI
             /** 出库界面 */
             PAGE_SALE,
 
-            /** 入库界面 */
-            PAGE_STORAGE,
+            /** 管理界面 */
+            PAGE_MANAGE,
 
             /** 报表界面 */
             PAGE_REPORT
@@ -112,8 +112,8 @@ namespace UI
         /** 导出全局JS函数, 切换到出库页面 */
         Q_INVOKABLE void switchSalePage();
 
-        /** 导出全局JS函数, 切换到入库页面 */
-        Q_INVOKABLE void switchStoragePage();
+        /** 导出全局JS函数, 切换到后台管理页面 */
+        Q_INVOKABLE void switchManagePage();
 
         /** 导出全局JS函数, 切换到报表页面 */
         Q_INVOKABLE void switchReportPage();

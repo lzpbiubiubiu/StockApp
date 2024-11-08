@@ -21,3 +21,5 @@ WarePresentationDialog          1.0 CheckoutOrderPanel.qml
 SettingIpDialog                 1.0 SettingIpDialog.qml
 GraphPanel                      1.0 GraphPanel.qml
 InputTextPanel                  1.0 InputTextPanel.qml
+StoragePanel                    1.0 StoragePanel.qml
+OrderStockListPanel             1.0 OrderStockListPanel.qml

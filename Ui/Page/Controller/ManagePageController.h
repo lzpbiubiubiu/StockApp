@@ -3,19 +3,19 @@
 #include "PageController.h"
 #include "Core/StackStruct.h"
 #include "Base/Common/ServiceManager.h"
-#include "Ui/Page/StoragePage.h"
+#include "Ui/Page/ManagePage.h"
 #include "Core/BusinessManager.h"
 
 namespace UI
 {
-    class StoragePageController : public PageController
+    class ManagePageController : public PageController
     {
         Q_OBJECT
 
     public:
-        StoragePageController(Page* parent);
+        ManagePageController(Page* parent);
 
-        virtual ~StoragePageController();
+        virtual ~ManagePageController();
 
         /** 商品入库 */
         Q_INVOKABLE void wareStorage(const QJsonObject& obj, int operate);
@@ -42,7 +42,7 @@ namespace UI
 
     private:
         // 页面
-        StoragePage* m_page = nullptr;
+        ManagePage* m_page = nullptr;
 
         // 业务管理器
         Core::BusinessManager* m_businessManager = nullptr;

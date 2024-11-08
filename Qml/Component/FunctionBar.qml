@@ -15,8 +15,8 @@ Rectangle {
         /** 出库界面 */
         PAGE_SALE,
 
-        /** 入库界面 */
-        PAGE_STORAGE,
+        /** 管理界面 */
+        PAGE_MANAGE,
 
         /** 报表界面 */
         PAGE_REPORT
@@ -120,17 +120,17 @@ Rectangle {
                 anchors.centerIn: parent
                 width: 54
                 height:parent.height
-                source: FunctionBar.PageIndex.PAGE_STORAGE === mainWindow.pageIndex ? "qrc:/Resources/Images/menu_storage_s.svg" : "qrc:/Resources/Images/menu_storage_n.svg"
+                source: FunctionBar.PageIndex.PAGE_MANAGE === mainWindow.pageIndex ? "qrc:/Resources/Images/menu_storage_s.svg" : "qrc:/Resources/Images/menu_storage_n.svg"
                 position: "top"
                 imageWidth: 20
                 imageHeight: 20
-                text: "入库"
+                text: "管理"
                 fontSize: 11
                 spacing: 4
                 fontWeight: Font.Bold
-                textColor: FunctionBar.PageIndex.PAGE_STORAGE === mainWindow.pageIndex ? "#0F62FE" : "#191919"
+                textColor: FunctionBar.PageIndex.PAGE_MANAGE === mainWindow.pageIndex ? "#0F62FE" : "#191919"
                 onSignalClicked: {
-                    mainWindow.switchStoragePage();
+                    mainWindow.switchManagePage();
                 }
             }
 

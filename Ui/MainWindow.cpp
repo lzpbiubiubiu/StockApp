@@ -184,10 +184,10 @@ namespace UI
         SetPageIndex(PAGE_MAIN);
     }
 
-    void MainWindow::switchStoragePage()
+    void MainWindow::switchManagePage()
     {
-        LoadPage("storagePage");
-        SetPageIndex(PAGE_STORAGE);
+        LoadPage("managePage");
+        SetPageIndex(PAGE_MANAGE);
     }
 
     void MainWindow::switchReportPage()

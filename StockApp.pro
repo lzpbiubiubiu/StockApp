@@ -62,16 +62,16 @@ SOURCES += \
         Ui/Component/StackWarePanel.cpp \
         Ui/Page/Controller/LoginPageController.cpp \
         Ui/Page/Controller/MainPageController.cpp \
+        Ui/Page/Controller/ManagePageController.cpp \
         Ui/Page/Controller/PageController.cpp \
         Ui/Page/Controller/ReportPageController.cpp \
         Ui/Page/Controller/SalePageController.cpp \
-        Ui/Page/Controller/StoragePageController.cpp \
         Ui/Page/LoginPage.cpp \
         Ui/Page/MainPage.cpp \
+        Ui/Page/ManagePage.cpp \
         Ui/Page/Page.cpp \
         Ui/Page/ReportPage.cpp \
         Ui/Page/SalePage.cpp \
-        Ui/Page/StoragePage.cpp \
         main.cpp \
         Ui/MainWindow.cpp
 
@@ -164,16 +164,16 @@ HEADERS += \
     Ui/MainWindow.h \
     Ui/Page/Controller/LoginPageController.h \
     Ui/Page/Controller/MainPageController.h \
+    Ui/Page/Controller/ManagePageController.h \
     Ui/Page/Controller/PageController.h \
     Ui/Page/Controller/ReportPageController.h \
     Ui/Page/Controller/SalePageController.h \
-    Ui/Page/Controller/StoragePageController.h \
     Ui/Page/LoginPage.h \
     Ui/Page/MainPage.h \
+    Ui/Page/ManagePage.h \
     Ui/Page/Page.h \
     Ui/Page/ReportPage.h \
-    Ui/Page/SalePage.h \
-    Ui/Page/StoragePage.h
+    Ui/Page/SalePage.h
 
 android {
     QT += core-private

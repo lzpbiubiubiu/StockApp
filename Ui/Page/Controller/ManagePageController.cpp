@@ -1,51 +1,51 @@
-﻿#include "StoragePageController.h"
+﻿#include "ManagePageController.h"
 #include "Base/Common/ServiceManager.h"
 #include "Base/Log/Log.h"
 #include "Base/Util/JsonUtil.h"
 #include "Application.h"
 namespace UI
 {
-    StoragePageController::StoragePageController(Page* parent)
+    ManagePageController::ManagePageController(Page* parent)
         : PageController(parent)
     {
-        m_page = GetPage<StoragePage>();
+        m_page = GetPage<ManagePage>();
         m_businessManager = Base::GetService<Core::BusinessManager>();
-        connect(m_businessManager, &Core::BusinessManager::signalConfigWareStorageSuccess, this, &StoragePageController::onConfigWareStorageSuccess);
-        connect(m_businessManager, &Core::BusinessManager::signalConfigWareStorageError, this, &StoragePageController::onConfigWareStorageError);
+        connect(m_businessManager, &Core::BusinessManager::signalConfigWareStorageSuccess, this, &ManagePageController::onConfigWareStorageSuccess);
+        connect(m_businessManager, &Core::BusinessManager::signalConfigWareStorageError, this, &ManagePageController::onConfigWareStorageError);
     }
 
-    StoragePageController::~StoragePageController()
+    ManagePageController::~ManagePageController()
     {
     }
 
-    void StoragePageController::OnPageLoad()
+    void ManagePageController::OnPageLoad()
     {
-        LOG_INFO(QString("StoragePage => OnPageLoad()"));
+        LOG_INFO(QString("ManagePage => OnPageLoad()"));
     }
 
-    void StoragePageController::OnPageShow()
+    void ManagePageController::OnPageShow()
     {
-        LOG_INFO(QString("StoragePage => OnPageShow()"));
+        LOG_INFO(QString("ManagePage => OnPageShow()"));
         InitPage();
     }
 
-    void StoragePageController::OnPageHide()
+    void ManagePageController::OnPageHide()
     {
-        LOG_INFO(QString("StoragePage => OnPageHide()"));
+        LOG_INFO(QString("ManagePage => OnPageHide()"));
     }
 
-    void StoragePageController::OnPageUnload()
+    void ManagePageController::OnPageUnload()
     {
-        LOG_INFO(QString("StoragePage => OnPageUnload()"));
+        LOG_INFO(QString("ManagePage => OnPageUnload()"));
     }
 
 
-    void StoragePageController::InitPage()
+    void ManagePageController::InitPage()
     {
 
     }
 
-    void StoragePageController::wareStorage(const QJsonObject& obj, int operate)
+    void ManagePageController::wareStorage(const QJsonObject& obj, int operate)
     {
         UI::Application::Get()->GetMainWindow()->ShowLoading();
         Core::BusinessManager::StorageOperate storageOperage = static_cast<Core::BusinessManager::StorageOperate>(operate);
@@ -58,13 +58,13 @@ namespace UI
         m_businessManager->ConfigWareStorage(item, storageOperage);
     }
 
-    void StoragePageController::onConfigWareStorageSuccess()
+    void ManagePageController::onConfigWareStorageSuccess()
     {
         UI::Application::Get()->GetMainWindow()->CloseLoading();
         UI::Application::Get()->GetMainWindow()->ShowToast(QStringLiteral("商品入库成功"), TOAST_SHORT_DELAY);
     }
 
-    void StoragePageController::onConfigWareStorageError(const QString& message)
+    void ManagePageController::onConfigWareStorageError(const QString& message)
     {
         UI::Application::Get()->GetMainWindow()->CloseLoading();
         UI::Application::Get()->GetMainWindow()->ShowToast(message, TOAST_SHORT_DELAY);
