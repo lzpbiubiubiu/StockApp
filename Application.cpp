@@ -28,8 +28,13 @@ static void InitModule()
     qRegisterMetaType<Core::OrderReportPtr>("OrderReportPtr");
     qRegisterMetaType<Core::OrderReportPtrList>("OrderReportPtrList");
 
+    qRegisterMetaType<Core::StockOrderDetail>("StockOrderDetail");
+    qRegisterMetaType<Core::StockOrderDetailPtr>("StockOrderDetailPtr");
+    qRegisterMetaType<Core::StockOrderDetailPtrList>("StockOrderDetailPtrList");
+
     qRegisterMetaType<Core::BusinessManager::ItemAction>("ItemAction");
     qRegisterMetaType<Core::BusinessManager::StorageOperate>("StorageOperate");
+    qRegisterMetaType<Core::BusinessManager::StockOrderOperate>("StockOrderOperate");
 }
 Q_COREAPP_STARTUP_FUNCTION(InitModule)
 

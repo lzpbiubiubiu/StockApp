@@ -21,9 +21,6 @@ UIDrawer {
         PAGE_ORDER_DETAIL
     }
 
-    /** 当前页面序号 */
-    property int __currentPageIndex: OrderStockListPanel.PageIndex.PAGE_ORDER_STOCK_LIST
-
     /** 当前订单列表选择序号 */
     property int __currentListIndex: -1
 
@@ -34,8 +31,11 @@ UIDrawer {
     edge: bottomEdge
     closeOnClickOutside: true
 
+    onSignalOpened: page.orderStockListPanel.queryOrderStockList()
+    onSignalClosed: page.orderStockListPanel.resetProperty()
+
     //内容区域
-    contentItem: OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL === root.__currentPageIndex ? orderDetailContent : orderContent
+    contentItem: OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL === page.orderStockListPanel.pageIndex ? orderDetailContent : orderContent
 
     // 订单备货清单
     Component {
@@ -85,8 +85,67 @@ UIDrawer {
                 }
 
                 Rectangle {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    visible: page.orderStockListPanel.querying || !page.orderStockListPanel.querySuccess
+
+                    // 图标
+                    AnimatedImage {
+                        id: icon
+                        width: 80
+                        height: 80
+                        source: "qrc:/Resources/Images/loading.gif"
+                        smooth: true
+                        visible: page.orderStockListPanel.querying
+                        //paused: !quickRecycleWarePanel.showRefreshAnimation
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Image {
+                        id: errorImage
+                        visible: !icon.visible
+                        source: "qrc:/Resources/Images/ware_bk.svg"
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+
+                    Text {
+                        id: errorText
+                        anchors.top: icon.visible ? icon.bottom : errorImage.bottom
+                        anchors.topMargin: 4
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: icon.visible ? "备货清单查询中..." : "备货清单查询失败"
+                        font.weight: Font.Medium
+                        font.family: UIConfig.fontFamily
+                        color: "#1E293B"
+                        font.pixelSize: 14
+                        horizontalAlignment: Text.AlignHCenter
+                    }
+
+                    UIButton {
+                        id: retryButton
+                        visible: !icon.visible
+                        anchors.top: errorText.bottom
+                        enabled: page.orderStockListPanel.refreshButtonEnable
+                        anchors.topMargin: 16
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: 84
+                        height: 32
+                        radius: 2
+                        fontWeight: Font.Medium
+                        fontSize: 12
+                        text: "重试"
+                        onClicked: {
+                            page.orderStockListPanel.refreshQueryOrderStockList()
+                        }
+                    }
+                }
+
+                Rectangle {
                      Layout.fillWidth: true
                      Layout.fillHeight: true
+                     visible: !page.orderStockListPanel.querying && page.orderStockListPanel.querySuccess
 
                      ListView {
                          id: listView
@@ -98,10 +157,7 @@ UIDrawer {
                          currentIndex: root.__currentListIndex
                          cacheBuffer: 300
                          clip: true
-                         model: [{"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10},
-                             {"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10},
-                             {"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10},
-                             {"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10}]
+                         model: page.orderStockListPanel.orderModel
                          delegate: Rectangle {
                              width: parent.width
                              height: 70
@@ -117,7 +173,8 @@ UIDrawer {
                                      anchors.fill: parent
                                      onClicked: {
                                          root.__currentListIndex = index
-                                         root.__currentPageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL
+                                         page.orderStockListPanel.pageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL
+                                         page.orderStockListPanel.clickOrderDetail(index)
                                      }
                                  }
 
@@ -191,7 +248,7 @@ UIDrawer {
                                                  horizontalAlignment: Text.AlignRight
                                                  verticalAlignment: Text.AlignVCenter
                                                  color: "#808080"
-                                                 text: "优惠: " + modelData.promotionAmt
+                                                 text: "优惠: " + modelData.totalPromotionAmt
                                              }
 
                                              Text {
@@ -201,7 +258,7 @@ UIDrawer {
                                                  horizontalAlignment: Text.AlignRight
                                                  verticalAlignment: Text.AlignVCenter
                                                  color: "#808080"
-                                                 text: "配送费: " + modelData.price
+                                                 text: "配送费: " + modelData.deliveryFreeAmt
                                              }
                                          }
                                      }
@@ -227,6 +284,7 @@ UIDrawer {
                                              focusPolicy: Qt.NoFocus
 
                                              onClicked: {
+                                                 page.orderStockListPanel.stockOrderOutbound(index)
                                              }
                                          }
                                      }
@@ -302,7 +360,7 @@ UIDrawer {
                         imagePressSource: "qrc:/Resources/Images/back_arraow.svg"
 
                         onSignalClicked: {
-                            root.__currentPageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_STOCK_LIST
+                            page.orderStockListPanel.pageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_STOCK_LIST
                         }
                     }
 
@@ -342,7 +400,7 @@ UIDrawer {
                     Layout.leftMargin: 8
                     Layout.rightMargin: 8
                     color: "#0F172A"
-                    text: "小票号: "
+                    text: "小票号: " + page.orderStockListPanel.currentOrder.receipt
                 }
 
                 Item {
@@ -388,7 +446,7 @@ UIDrawer {
                                             font.weight: Font.Bold
                                             font.family: UIConfig.fontFamily
                                             color: "#0F172A"
-                                            text: "12.355"
+                                            text: page.orderStockListPanel.currentOrder.orderAmt
                                         }
                                     }
                                 }
@@ -417,7 +475,7 @@ UIDrawer {
                                             font.weight: Font.Bold
                                             font.family: UIConfig.fontFamily
                                             color: "#0F172A"
-                                            text: "1111"
+                                            text: page.orderStockListPanel.currentOrder.wareTotalQty
                                         }
                                     }
                                 }
@@ -456,7 +514,7 @@ UIDrawer {
                                             font.weight: Font.Bold
                                             font.family: UIConfig.fontFamily
                                             color: "#0F172A"
-                                            text: "13543"
+                                            text: page.orderStockListPanel.currentOrder.totalPromotionAmt
                                         }
                                     }
                                 }
@@ -485,7 +543,7 @@ UIDrawer {
                                             font.weight: Font.Bold
                                             font.family: UIConfig.fontFamily
                                             color: "#0F172A"
-                                            text: "12345"
+                                            text: page.orderStockListPanel.currentOrder.deliveryFreeAmt
                                         }
                                     }
                                 }
@@ -511,175 +569,273 @@ UIDrawer {
                     color: "#FFFFFF"
                     radius: 0
 
-                    ListView {
-                        id: listView
-                        focus: true
+                    ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 8
-                        boundsBehavior:Flickable.StopAtBounds
-                        maximumFlickVelocity: 2500
-                        currentIndex: -1
-                        cacheBuffer: 300
-                        clip: true
-                        model: [{"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10},
-                            {"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10},
-                            {"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10},
-                            {"receipt": "1234567897", "dateTime": "2024-11-06 12:30:00", "orderAmt": 123.65, "promotionAmt": 14.23, "price": 10}]
-                        delegate: Rectangle {
-                            width: parent.width
-                            height: 65
+
+                        ListView {
+                            id: listView
+                            focus: true
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                            boundsBehavior:Flickable.StopAtBounds
+                            maximumFlickVelocity: 2500
+                            currentIndex: -1
+                            cacheBuffer: 300
                             clip: true
-
-                            Rectangle {
+                            model: page.orderStockListPanel.currentOrder.wareList
+                            delegate: Rectangle {
                                 width: parent.width
-                                height: parent.height
-                                color: "transparent"
-
-                                ColumnLayout {
-                                    anchors.fill: parent
-                                    spacing: 0
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                        Layout.preferredHeight: 20
-                                        Layout.topMargin: 4
-                                        RowLayout {
-                                            anchors.fill: parent
-                                            Text {
-                                                font.pixelSize: 12
-                                                font.family: UIConfig.fontFamily
-                                                font.weight: Font.Bold
-                                                horizontalAlignment: Text.AlignLeft
-                                                verticalAlignment: Text.AlignVCenter
-                                                color: "#000000"
-                                                text: "点光炮"
-                                            }
-
-                                            Item {
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                            }
-
-                                            Text {
-                                                font.pixelSize: 12
-                                                font.family: UIConfig.fontFamily
-                                                font.weight: Font.Bold
-                                                horizontalAlignment: Text.AlignRight
-                                                verticalAlignment: Text.AlignVCenter
-                                                color: "#000000"
-                                                text: "X10"
-                                            }
-                                        }
-                                    }
-
-                                    Text {
-                                        font.pixelSize: 10
-                                        font.family: UIConfig.fontFamily
-                                        font.weight: Font.Medium
-                                        horizontalAlignment: Text.AlignLeft
-                                        verticalAlignment: Text.AlignVCenter
-                                        color: "#808080"
-                                        text: "20240001"
-                                    }
-
-                                    Item {
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-
-                                        RowLayout {
-                                            anchors.fill: parent
-                                            spacing: 8
-
-                                            Text {
-                                                font.pixelSize: 10
-                                                font.family: UIConfig.fontFamily
-                                                font.weight: Font.Medium
-                                                horizontalAlignment: Text.AlignLeft
-                                                verticalAlignment: Text.AlignVCenter
-                                                color: "#808080"
-                                                text: "单价:" + "100.00"
-                                            }
-
-                                            Item {
-                                                Layout.fillWidth: true
-                                                Layout.fillHeight: true
-                                            }
-
-                                            Text {
-                                                font.pixelSize: 10
-                                                font.family: UIConfig.fontFamily
-                                                font.weight: Font.Medium
-                                                horizontalAlignment: Text.AlignRight
-                                                verticalAlignment: Text.AlignVCenter
-                                                color: "#808080"
-                                                text: "优惠: " + modelData.promotionAmt
-                                            }
-
-                                            Text {
-                                                font.pixelSize: 10
-                                                font.family: UIConfig.fontFamily
-                                                font.weight: Font.Medium
-                                                horizontalAlignment: Text.AlignRight
-                                                verticalAlignment: Text.AlignVCenter
-                                                color: "#000000"
-                                                text: "小计: " + "1234.35"
-                                            }
-                                        }
-                                    }
-
-                                }
+                                height: 65
+                                clip: true
 
                                 Rectangle {
-                                    anchors.bottom: parent.bottom
                                     width: parent.width
-                                    height: 1
-                                    color: "#E2E5EB"
-                                    visible: index !== listView.currentIndex
+                                    height: parent.height
+                                    color: "transparent"
+
+                                    ColumnLayout {
+                                        anchors.fill: parent
+                                        spacing: 0
+
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.preferredHeight: 20
+                                            Layout.topMargin: 4
+                                            RowLayout {
+                                                anchors.fill: parent
+                                                Text {
+                                                    font.pixelSize: 12
+                                                    font.family: UIConfig.fontFamily
+                                                    font.weight: Font.Bold
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    color: "#000000"
+                                                    text: modelData.wareName
+                                                }
+
+                                                Item {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                }
+
+                                                Connections {
+                                                    target: numPad
+                                                    onVisibleChanged: {
+                                                        if(!numPad.visible && countInput.visible)
+                                                        {
+                                                            countInput.visible = false
+                                                            countText.visible = true
+                                                        }
+                                                    }
+                                                }
+
+                                                Text {
+                                                    id: countText
+                                                    font.pixelSize: 12
+                                                    font.family: UIConfig.fontFamily
+                                                    font.weight: Font.Bold
+                                                    horizontalAlignment: Text.AlignRight
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    color: "#000000"
+                                                    text: "X" + modelData.wareCount
+
+                                                    MouseArea {
+                                                        anchors.fill: parent
+                                                        onClicked: {
+                                                            if(countText.visible)
+                                                            {
+                                                                listView.currentIndex = index
+                                                                countInput.visible = true
+                                                                countInput.text = countText.text.slice(1)
+                                                                countInput.forceActiveFocus()
+                                                                countText.visible = false
+                                                                numPad.visible = true
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                UITextInput {
+                                                    id: countInput
+                                                    Layout.fillHeight: true
+                                                    Layout.preferredWidth: countText.width + 8
+                                                    validator: RegExpValidator {regExp: /^[0-9]+$/}
+                                                    maximumLength: 3
+                                                    font.pixelSize: 12
+                                                    font.family: UIConfig.fontFamily
+                                                    font.weight: Font.Bold
+                                                    horizontalAlignment: TextInput.AlignHCenter
+                                                    activeFocusOnPress: false
+                                                    visible: false
+                                                    showClear: false
+                                                    onSignalOnFocusChanged: {
+                                                        if(!focus){
+                                                            numPad.visible = false
+                                                        }
+                                                    }
+                                                    onSignalOnEnterPressed: {
+                                                        if(countInput.visible)
+                                                        {
+                                                            countInput.visible = false
+                                                            countText.visible = true
+                                                            numPad.visible = false
+                                                            countText.text = "X" + text
+                                                            page.orderStockListPanel.updateStockOrder(root.__currentListIndex, index, parseInt(text))
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Text {
+                                            font.pixelSize: 10
+                                            font.family: UIConfig.fontFamily
+                                            font.weight: Font.Medium
+                                            horizontalAlignment: Text.AlignLeft
+                                            verticalAlignment: Text.AlignVCenter
+                                            color: "#808080"
+                                            text: modelData.wareCode
+                                        }
+
+                                        Item {
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+
+                                            RowLayout {
+                                                anchors.fill: parent
+                                                spacing: 8
+
+                                                Text {
+                                                    font.pixelSize: 10
+                                                    font.family: UIConfig.fontFamily
+                                                    font.weight: Font.Medium
+                                                    horizontalAlignment: Text.AlignLeft
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    color: "#808080"
+                                                    text: "单价:" + modelData.wareDiscountPrice
+                                                }
+
+                                                Item {
+                                                    Layout.fillWidth: true
+                                                    Layout.fillHeight: true
+                                                }
+
+                                                Text {
+                                                    font.pixelSize: 10
+                                                    font.family: UIConfig.fontFamily
+                                                    font.weight: Font.Medium
+                                                    horizontalAlignment: Text.AlignRight
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    color: "#808080"
+                                                    text: "优惠: " + modelData.warePromotionAmount
+                                                }
+
+                                                Text {
+                                                    font.pixelSize: 10
+                                                    font.family: UIConfig.fontFamily
+                                                    font.weight: Font.Medium
+                                                    horizontalAlignment: Text.AlignRight
+                                                    verticalAlignment: Text.AlignVCenter
+                                                    color: "#000000"
+                                                    text: "小计: " + modelData.wareAmount
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                    Rectangle {
+                                        anchors.bottom: parent.bottom
+                                        width: parent.width
+                                        height: 1
+                                        color: "#E2E5EB"
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    // 数字键盘
-                    UINumPad {
-                        radius: 8
-                        id: numPad
-                        color: "white"
-                        visible: false
-                        Layout.preferredHeight: root.height * 0.35
-                        Layout.fillWidth: true
-                        Layout.bottomMargin: 8
-                        enterKeyText: "确定"
-                        cancelBtnText: "清除"
-                        onSignalCancelButtonClicked: {
-                            numPad.visible = false
-                            rec.visible = true
-                            rec.forceActiveFocus()
+                        // 数字键盘
+                        UINumPad {
+                            radius: 8
+                            id: numPad
+                            color: "white"
+                            visible: false
+                            onVisibleChanged: {
+                                if(visible){
+                                    rec.visible = false
+                                }
+                                else{
+                                    rec.visible = true
+                                }
+                            }
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: root.height * 0.35
+                            enterKeyText: "确定"
+                            cancelBtnText: "取消"
+                            onSignalCancelButtonClicked: {
+                                numPad.visible = false
+                                rec.forceActiveFocus()
+                            }
                         }
                     }
 
                     Rectangle {
                         id: rec
                         anchors.bottom: parent.bottom
+                        anchors.bottomMargin: 8
                         width: parent.width
                         height: 40
                         z: 1
 
-                        UIButton {
-                            id: acceptButton
-                            anchors.centerIn: parent
-                            height: 24
-                            width: 150
-                            radius: 12
-                            text: "修改订单"
-                            textColor: "#FFFFFF"
-                            fontWeight: Font.Bold
-                            fontSize: 13
-                            color: "#315EFB"
+                        RowLayout {
+                            anchors.fill: parent
+                            spacing: 24
 
-                            onClicked: {
+                            Item {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                            }
+
+                            UIButton {
+                                id: deleteButton
+                                Layout.preferredHeight: 25
+                                Layout.preferredWidth: 80
+                                Layout.alignment: Qt.AlignVCenter
+                                radius: 12
+                                text: "取消订单"
+                                textColor: "#FFFFFF"
+                                fontWeight: Font.Bold
+                                fontSize: 13
+                                color: "#315EFB"
+
+                                onClicked: {
+                                    page.orderStockListPanel.stockOrderVoid(root.__currentListIndex)
+                                }
+                            }
+
+                            UIButton {
+                                id: acceptButton
+                                Layout.preferredHeight: 25
+                                Layout.preferredWidth: 80
+                                Layout.alignment: Qt.AlignVCenter
+                                radius: 12
+                                text: "修改订单"
+                                textColor: "#FFFFFF"
+                                fontWeight: Font.Bold
+                                fontSize: 13
+                                color: "#315EFB"
+
+                                onClicked: {
+                                    page.orderStockListPanel.stockOrderModify(root.__currentListIndex)
+                                }
+                            }
+                            Item {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
                             }
                         }
+
                     }
                 }
             }

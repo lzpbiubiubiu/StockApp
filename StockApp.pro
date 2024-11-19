@@ -49,8 +49,10 @@ SOURCES += \
         Entity/WareItemEntity.cpp \
         Protocol/Hytrade/HytradeInfoRequest.cpp \
         Protocol/Hytrade/HytradeInfoResponse.cpp \
+        Protocol/Hytrade/ModifyStockOrderRequest.cpp \
         Protocol/Query/QueryOrderReportRequest.cpp \
         Protocol/Query/QueryOrderReportResponse.cpp \
+        Protocol/Query/QueryOrderStockListResponse.cpp \
         Protocol/StockAppResponse.cpp \
         Protocol/Storage/ModifyConfigWareRequest.cpp \
         Protocol/Terminal/StockAppHeartbeatRequest.cpp \
@@ -58,6 +60,7 @@ SOURCES += \
         Protocol/Terminal/TerminalGetConfigwaresResponse.cpp \
         Protocol/Terminal/TerminalUserLoginRequest.cpp \
         Protocol/Terminal/TerminalUserLoginResponse.cpp \
+        Ui/Component/OrderStockListPanel.cpp \
         Ui/Component/SaleWarePanel.cpp \
         Ui/Component/StackWarePanel.cpp \
         Ui/Page/Controller/LoginPageController.cpp \
@@ -150,8 +153,10 @@ HEADERS += \
     Entity/WareItemEntity.h \
     Protocol/Hytrade/HytradeInfoRequest.h \
     Protocol/Hytrade/HytradeInfoResponse.h \
+    Protocol/Hytrade/ModifyStockOrderRequest.h \
     Protocol/Query/QueryOrderReportRequest.h \
     Protocol/Query/QueryOrderReportResponse.h \
+    Protocol/Query/QueryOrderStockListResponse.h \
     Protocol/StockAppResponse.h \
     Protocol/Storage/ModifyConfigWareRequest.h \
     Protocol/Terminal/StockAppHeartbeatRequest.h \
@@ -159,6 +164,7 @@ HEADERS += \
     Protocol/Terminal/TerminalGetConfigwaresResponse.h \
     Protocol/Terminal/TerminalUserLoginRequest.h \
     Protocol/Terminal/TerminalUserLoginResponse.h \
+    Ui/Component/OrderStockListPanel.h \
     Ui/Component/SaleWarePanel.h \
     Ui/Component/StackWarePanel.h \
     Ui/MainWindow.h \

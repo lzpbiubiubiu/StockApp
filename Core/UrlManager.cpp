@@ -58,6 +58,8 @@ namespace Core
         AddUrl(HYTRADE_INFO, "", "/stockServer/sale/hytradeInfo", 5000, QStringLiteral("出库订单结算"));
         AddUrl(MODIFY_CONFIG_WARE, "", "/stockServer/storage/modifyConfigWare", 5000, QStringLiteral("商品入库"));
         AddUrl(QUERY_ORDER_REPORT, "", "/stockServer/sale/queryOrderReport", 5000, QStringLiteral("查询订单报表"));
+        AddUrl(QUERY_ORDER_STOCK_LIST, "", "/stockServer/sale/queryOrderStockList", 5000, QStringLiteral("查询备货清单列表"));
+        AddUrl(MODIFY_STOCK_ORDER, "", "/stockServer/sale/modifyStockOrder", 5000, QStringLiteral("备货订单修改"));
 
         return true;
     }

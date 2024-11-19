@@ -8,11 +8,13 @@
 #include "Protocol/Terminal/TerminalGetConfigwaresResponse.h"
 #include "Protocol/Hytrade/HytradeInfoRequest.h"
 #include "Protocol/Hytrade/HytradeInfoResponse.h"
+#include "Protocol/Hytrade/ModifyStockOrderRequest.h"
 #include "Protocol/Terminal/TerminalUserLoginRequest.h"
 #include "Protocol/Terminal/TerminalUserLoginResponse.h"
 #include "Protocol/Storage/ModifyConfigWareRequest.h"
 #include "Protocol/Query/QueryOrderReportRequest.h"
 #include "Protocol/Query/QueryOrderReportResponse.h"
+#include "Protocol/Query/QueryOrderStockListResponse.h"
 #include "Core/UrlManager.h"
 #include "Core/SequenceGenerator.h"
 #include "Core/DatabaseManager.h"
@@ -810,8 +812,6 @@ namespace Core
     void BusinessManager::onConfigWareStorage(Core::WareItemPtr item, StorageOperate operate)
     {
         Q_ASSERT(item != nullptr);
-
-        // 新构架提交订单走算价逻辑
         auto response = QSharedPointer<Net::StockAppResponse>::create();
         auto request = QSharedPointer<Net::ModifyConfigWareRequest>::create();
 
@@ -898,12 +898,25 @@ namespace Core
             ret = false;
         }
 
+        // 滚动流水号
+        auto sg = Base::GetService<Core::SequenceGenerator>();
+        sg->Next(Core::SequenceGenerator::SALE);
         return ret;
     }
 
     void BusinessManager::QueryOrderReport(const QDateTime& date)
     {
         QMetaObject::invokeMethod(this, "onQueryOrderReport", Q_ARG(QDateTime, date));
+    }
+
+    void BusinessManager::QueryOrderStockList()
+    {
+        QMetaObject::invokeMethod(this, "onQueryOrderStockList");
+    }
+
+    void BusinessManager::ModifyStockOrder(Core::StockOrderDetailPtr stockOrder, StockOrderOperate operateType)
+    {
+        QMetaObject::invokeMethod(this, "onModifyStockOrder", Q_ARG(Core::StockOrderDetailPtr, stockOrder), Q_ARG(StockOrderOperate, operateType));
     }
 
     void BusinessManager::onQueryOrderReport(const QDateTime& date)
@@ -936,8 +949,85 @@ namespace Core
             message = response->GetErrorMessage();
             emit signalQueryOrderReportError(message);
         }
+    }
 
+    void BusinessManager::onQueryOrderStockList()
+    {
+        auto request = QSharedPointer<Net::StockAppRequest>::create();
+        auto response = QSharedPointer<Net::QueryOrderStockListResponse>::create();
+        auto urlParam = Base::GetService<Core::UrlManager>()->GetUrl(Core::UrlManager::QUERY_ORDER_STOCK_LIST);
+        request->SetUrl(urlParam.url);
+        request->SetTimeout(urlParam.timeout);
+        QString message;
 
+        Net::HttpModule::Get()->ProcessRequest(request, response, true);
+        if(response->IsOk())
+        {
+            LOG_INFO(QStringLiteral("---------备货清单查询成功-----------"));
+            Core::StockOrderDetailPtrList stockOrders;
+            for(const auto& item : response->GetResult().stockingOrders)
+            {
+                Core::StockOrderDetailPtr stockOrderDetail = Core::StockOrderDetailPtr::create();
+                stockOrderDetail->orderNo = item.orderNo;
+                stockOrderDetail->orderUuid = item.orderUuid;
+                stockOrderDetail->time = item.time;
+                stockOrderDetail->orderAmount = item.orderAmount;
+                stockOrderDetail->totalPromotionAmount = item.totalPromotionAmount;
+                stockOrderDetail->deliveryFreeAmount = item.deliveryFreeAmount;
+                stockOrderDetail->extension = item.extension;
+                for(const auto& wareItem : item.wares)
+                {
+                    Core::StockOrderDetail::StockOrderWare storckOrderWare;
+                    storckOrderWare.amount = wareItem.amount;
+                    storckOrderWare.code = wareItem.code;
+                    storckOrderWare.name = wareItem.name;
+                    storckOrderWare.count = wareItem.count;
+                    storckOrderWare.discountPrice = wareItem.discountPrice;
+                    storckOrderWare.gifts = wareItem.gifts;
+                    storckOrderWare.price = wareItem.price;
+                    storckOrderWare.promotionAmount = wareItem.promotionAmount;
+                    storckOrderWare.extension = wareItem.extension;
+                    stockOrderDetail->wares.append(storckOrderWare);
+                }
+                stockOrders.append(stockOrderDetail);
+            }
+            emit signalQueryOrderStockListSuccess(stockOrders);
+        }
+        else
+        {
+            LOG_INFO(QStringLiteral("---------备货清单查询失败-----------"));
+            message = response->GetErrorMessage();
+            emit signalQueryOrderStockListError(message);
+        }
+    }
+
+    void BusinessManager::onModifyStockOrder(Core::StockOrderDetailPtr stockOrder, StockOrderOperate operateType)
+    {
+        Q_ASSERT(stockOrder != nullptr);
+        auto response = QSharedPointer<Net::StockAppResponse>::create();
+        auto request = QSharedPointer<Net::ModifyStockOrderRequest>::create();
+
+        request->SetOrderNo(stockOrder->orderNo);
+        request->SetOrderUuid(stockOrder->orderUuid);
+        request->SetOperate(operateType);
+        request->SetStockOrderDetail(stockOrder->ToPushJsonObj());
+        auto urlParam = Base::GetService<Core::UrlManager>()->GetUrl(Core::UrlManager::MODIFY_STOCK_ORDER);
+        request->SetUrl(urlParam.url);
+        request->SetTimeout(urlParam.timeout);
+        QString message;
+
+        Net::HttpModule::Get()->ProcessRequest(request, response, true);
+        if(response->IsOk())
+        {
+            LOG_INFO(QStringLiteral("---------订单出库成功-----------"));
+            emit signalModifyStockOrderSuccess();
+        }
+        else
+        {
+            LOG_INFO(QStringLiteral("---------订单出库失败-----------"));
+            message = response->GetErrorMessage();
+            emit signalModifyStockOrderError(message, operateType);
+        }
     }
 }
 

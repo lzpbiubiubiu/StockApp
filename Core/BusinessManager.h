@@ -42,6 +42,20 @@ namespace Core
         };
         Q_ENUM(StorageOperate)
 
+        /** 备货订单操作类型 */
+        enum StockOrderOperate
+        {
+            /** 订单出库 */
+            ORDER_OUTBOUND = 1,
+
+            /** 订单修改 */
+            ORDER_MODIFY = 2,
+
+            /** 订单作废 */
+            ORDER_VOID = 3
+        };
+        Q_ENUM(StockOrderOperate)
+
         BusinessManager(QObject* parent = nullptr);
         virtual ~BusinessManager();
 
@@ -86,6 +100,12 @@ namespace Core
 
         /** 订单报表查询 */
         void QueryOrderReport(const QDateTime& date);
+
+        /** 备货清单查询 */
+        void QueryOrderStockList();
+
+        /** 备货订单修改 */
+        void ModifyStockOrder(Core::StockOrderDetailPtr stockOrder, StockOrderOperate operateType);
     protected:
         /** 创建新订单 */
         OrderPtr CreateOrder() const;
@@ -128,7 +148,8 @@ namespace Core
         Q_INVOKABLE void onUpdateAppCache(const QString& ip, int port);
         Q_INVOKABLE void onConfigWareStorage(Core::WareItemPtr item, StorageOperate operate);
         Q_INVOKABLE void onQueryOrderReport(const QDateTime& date);
-
+        Q_INVOKABLE void onQueryOrderStockList();
+        Q_INVOKABLE void onModifyStockOrder(Core::StockOrderDetailPtr stockOrder, StockOrderOperate operateType);
     Q_SIGNALS:
         /** 拉取配置商品成功|失败信号 */
         void signalLoadConfigWaresSuccess();
@@ -174,6 +195,14 @@ namespace Core
         /** 订单报表查询信号 */
         void signalQueryOrderReportSuccess(const Core::OrderReportPtrList& orderReports);
         void signalQueryOrderReportError(const QString& message);
+
+        /** 备货清单查询信号 */
+        void signalQueryOrderStockListSuccess(const Core::StockOrderDetailPtrList& stockOrders);
+        void signalQueryOrderStockListError(const QString& message);
+
+        /** 备货订单修改 */
+        void signalModifyStockOrderSuccess();
+        void signalModifyStockOrderError(const QString& message, StockOrderOperate operateType);
     private:
 
         // 数据库操作对象

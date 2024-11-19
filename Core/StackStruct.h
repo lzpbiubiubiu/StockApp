@@ -185,6 +185,84 @@ namespace Core
     using OrderReportPtr = QSharedPointer<OrderReport>;
     using OrderReportPtrList = QList<QSharedPointer<OrderReport>>;
 
+    struct StockOrderDetail
+    {
+        /** 备货清单商品信息*/
+        struct StockOrderWare
+        {
+            /** 商品编码*/
+            QString code;
+
+            /** 商品名称*/
+            QString name;
+
+            /** 商品小计金额*/
+            qint64 amount = 0;
+
+            /** 订单总优惠*/
+            qint64 count = 0;
+
+            /** 商品执行价*/
+            qint64 discountPrice = 0;
+
+            /** 商品原单价*/
+            qint64 price = 0;
+
+            /** 商品优惠金额*/
+            qint64 promotionAmount = 0;
+
+            /** 是否是赠品*/
+            bool gifts = false;
+
+            /** 商品扩展信息*/
+            QString extension;
+        };
+
+        /** 小票号*/
+        QString orderNo;
+
+        /** 订单UUID*/
+        QString orderUuid;
+
+        /** 订单金额*/
+        qint64 orderAmount = 0;
+
+        /** 订单总优惠*/
+        qint64 totalPromotionAmount = 0;
+
+        /** 订单配送费*/
+        qint64 deliveryFreeAmount = 0;
+
+        /** 订单时间 */
+        QString time;
+
+        /** 商品列表*/
+        QList<StockOrderWare> wares;
+
+        /** 订单扩展信息*/
+        QString extension;
+
+        QJsonObject ToPushJsonObj() const
+        {
+            QJsonObject pushObj;
+            pushObj["orderAmount"] = orderAmount;
+            pushObj["totalPromotionAmount"] = totalPromotionAmount;
+            QJsonArray wareArray;
+            for(const auto& item : wares)
+            {
+                QJsonObject wareObj;
+                wareObj["code"] = item.code;
+                wareObj["amount"] = item.amount;
+                wareObj["count"] = item.count;
+                wareArray.append(wareObj);
+            }
+            pushObj["wares"] = wareArray;
+            return pushObj;
+        }
+        Q_GADGET
+    };
+    using StockOrderDetailPtr = QSharedPointer<StockOrderDetail>;
+    using StockOrderDetailPtrList = QList<QSharedPointer<StockOrderDetail>>;
 }
 Q_DECLARE_METATYPE(Core::WareItem)
 Q_DECLARE_METATYPE(Core::WareItemPtr)
@@ -198,3 +276,6 @@ Q_DECLARE_METATYPE(Core::UserPtrList)
 Q_DECLARE_METATYPE(Core::OrderReport)
 Q_DECLARE_METATYPE(Core::OrderReportPtr)
 Q_DECLARE_METATYPE(Core::OrderReportPtrList)
+Q_DECLARE_METATYPE(Core::StockOrderDetail)
+Q_DECLARE_METATYPE(Core::StockOrderDetailPtr)
+Q_DECLARE_METATYPE(Core::StockOrderDetailPtrList)

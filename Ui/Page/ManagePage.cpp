@@ -8,6 +8,7 @@ namespace UI
     ManagePage::ManagePage(QObject* parent/* = nullptr*/)
         : Page(parent)
     {
+        m_orderStockListPanel = new OrderStockListPanel(this);
         SetContentItem("qrc:/Qml/Page/ManagePage.qml");
         SetController(new ManagePageController(this));
     }

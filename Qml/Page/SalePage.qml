@@ -16,7 +16,6 @@ Page {
 
         ColumnLayout {
             anchors.fill: parent
-            spacing: 2
 
             Rectangle {
                  Layout.fillWidth: true
@@ -27,7 +26,10 @@ Page {
                      id: listView
                      focus: true
                      anchors.fill: parent
-                     anchors.margins: 8
+                     anchors.leftMargin: 8
+                     anchors.rightMargin: 8
+                     anchors.topMargin: 8
+                     anchors.bottomMargin: 2
                      boundsBehavior:Flickable.StopAtBounds
                      maximumFlickVelocity: 2500
                      spacing: 10
@@ -283,12 +285,12 @@ Page {
                                                            onClicked: {
                                                                if(countText.visible)
                                                                {
+                                                                   listView.currentIndex = index
                                                                    countInput.visible = true
                                                                    countInput.text = countText.text
                                                                    countInput.forceActiveFocus()
                                                                    countText.visible = false
                                                                    mainWindow.showNumPad = true
-                                                                   //Qt.inputMethod.visible = false
                                                                }
                                                            }
                                                        }
@@ -422,6 +424,26 @@ Page {
                          }
                      }
                  }
+            }
+
+            Item {
+                id: numRec
+                Layout.fillWidth: true
+                Layout.preferredHeight: (root.height * 0.4) - 101
+                visible: mainWindow.showNumPad
+
+                Connections {
+                    target: mainWindow
+                    onShowNumPadChanged: {
+                        if(mainWindow.showNumPad)
+                        {
+                            //numRec.visible = true
+                        }
+                        else{
+                            //numRec.visible = false
+                        }
+                    }
+                }
             }
 
             Rectangle {

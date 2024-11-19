@@ -39,7 +39,13 @@ namespace Core
             MODIFY_CONFIG_WARE,
 
             /** 查询订单报表 */
-            QUERY_ORDER_REPORT
+            QUERY_ORDER_REPORT,
+
+            /** 查询备货清单列表 */
+            QUERY_ORDER_STOCK_LIST,
+
+            /** 备货订单修改 */
+            MODIFY_STOCK_ORDER,
         };
 
         /** URL参数 */

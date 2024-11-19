@@ -188,7 +188,6 @@ UIDrawer {
                                     font.weight: Font.Bold
                                     placeholderText: modelData.placeholderText
                                     validator: RegExpValidator { regExp: new RegExp(modelData.regExp)}
-                                    //textField.readOnly: "name" === modelData.inputDataKey ? true : false
                                     activeFocusOnPress: "name" === modelData.inputDataKey ? true : false
                                     onSignalOnClicked: {
                                         listView.currentIndex = index
