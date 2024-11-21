@@ -314,7 +314,7 @@ UIDrawer {
 
                              Text {
                                  id: bkText
-                                 text: "购物车为空"
+                                 text: "当前没有备货订单"
                                  color: "#1E293B"
                                  font.family: UIConfig.fontFamily
                                  font.pixelSize: 14

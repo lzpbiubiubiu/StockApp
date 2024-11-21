@@ -750,7 +750,8 @@ namespace Core
             return;
         }
         m_saleOrder->wholeOrderPromoAmount = wholeOrderPromoAmt;
-        // 新构架提交订单走算价逻辑
+        m_saleOrder->orderAmount -= m_saleOrder->wholeOrderPromoAmount;
+
         auto response = QSharedPointer<Net::HytradeInfoResponse>::create();
         auto request = QSharedPointer<Net::HytradeInfoRequest>::create();
 
@@ -777,7 +778,7 @@ namespace Core
         Net::HttpModule::Get()->ProcessRequest(request, response, true);
         if(response->IsOk())
         {
-            LOG_INFO(QStringLiteral("---------商品出库成功-----------"));
+            LOG_INFO(QStringLiteral("---------生成备货订单成功-----------"));
 
             if(!FinishOrder(message))
             {
@@ -790,7 +791,7 @@ namespace Core
         }
         else
         {
-            LOG_INFO(QStringLiteral("---------商品出库失败-----------"));
+            LOG_INFO(QStringLiteral("---------生成备货订单失败-----------"));
             QString errorData = response->GetData();
             QString errorCode = response->GetError();
             message = response->GetErrorMessage();
