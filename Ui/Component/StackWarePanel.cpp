@@ -44,6 +44,9 @@ namespace UI
         case ItemRole::UUID_ROLE:
             value = itemData.uuid;
             break;
+        case ItemRole::CODE_ROLE:
+            value = itemData.code;
+            break;
         case ItemRole::NAME_ROLE:
             value = itemData.name;
             break;
@@ -69,6 +72,7 @@ namespace UI
     {
         QHash<int, QByteArray> roles;
         roles[ItemRole::UUID_ROLE] = "uuid";
+        roles[ItemRole::CODE_ROLE] = "code";
         roles[ItemRole::NAME_ROLE] = "name";
         roles[ItemRole::STACK_ROLE] = "stock";
         roles[ItemRole::WHOLESALE_PRICE_ROLE] = "wholesalePrice";
@@ -97,6 +101,7 @@ namespace UI
     {
         StackWarePanelModel::StackWareItem wareItem;
         wareItem.name = item->name;
+        wareItem.code = item->code;
         wareItem.wholesalePrice = Base::PriceUtil::FenToString(item->wholesalePrice);
         wareItem.retailPrice = Base::PriceUtil::FenToString(item->retailPrice);
         wareItem.uuid = item->uuid;

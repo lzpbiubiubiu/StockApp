@@ -92,11 +92,65 @@ Page {
                                  spacing: 4
                                  anchors.margins: 4
 
-                                 Image {
-                                     id: wareImage
+                                 Item {
                                      Layout.fillWidth: true
                                      Layout.preferredHeight: 72
-                                     source: "qrc:/Resources/Images/default_ware.svg"
+
+                                     Image {
+                                         id: wareImage
+                                         anchors.fill: parent
+                                         source: "qrc:/Resources/Images/default_ware.svg"
+                                         //source: "qrc:/Resources/Images/test.png"
+                                     }
+
+                                     // 商品编码码
+                                     Item {
+                                         width: wareImage.width
+                                         height: 14
+                                         anchors.bottom: wareImage.bottom
+                                         anchors.bottomMargin: 2
+
+                                         // ID
+                                         RowLayout {
+                                             anchors.fill: parent
+                                             spacing: 4
+
+                                             //条码标记
+                                             Rectangle {
+                                                 Layout.leftMargin: 2
+                                                 implicitWidth: 14
+                                                 implicitHeight: 14
+                                                 color: "#E6F9F0"
+                                                 radius: 2
+
+                                                 Text {
+                                                     anchors.centerIn: parent
+                                                     text: "#"
+                                                     font.pixelSize: 11
+                                                     font.family: UIConfig.fontFamily
+                                                     font.weight: Font.Normal
+                                                     color: "#0FC269"
+                                                     verticalAlignment: Text.AlignVCenter
+                                                 }
+                                             }
+
+                                             Text {
+                                                 Layout.fillHeight: true
+                                                 Layout.fillWidth: true
+                                                 Layout.alignment: Qt.AlignVCenter
+                                                 font.family: UIConfig.fontFamily
+                                                 font.pixelSize: 9
+                                                 font.weight: Font.Bold
+                                                 maximumLineCount: 1
+                                                 elide: Text.ElideRight
+                                                 color: "#616E80"
+                                                 text: code
+                                                 horizontalAlignment: Text.AlignLeft
+                                                 verticalAlignment: Text.AlignVCenter
+                                                 clip: true
+                                             }
+                                         }
+                                     }
                                  }
 
                                  Item {
@@ -107,27 +161,34 @@ Page {
                                         id: wareNameText
                                         anchors.left: parent.left
                                         leftPadding: 4
+                                        width: parent.width * 2 / 3
+                                        height: parent.height
                                         font.pixelSize: 12
                                         font.weight: Font.Bold
                                         font.family: UIConfig.fontFamily
                                         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                                         elide: Text.ElideRight
-                                        maximumLineCount: 2
+                                        maximumLineCount: 1
+                                        horizontalAlignment: Text.AlignLeft
+                                        verticalAlignment: Text.AlignVCenter
                                         color: "#0F172A"
                                         text: name
                                     }
 
                                     Text {
                                         anchors.right: parent.right
+                                        width: parent.width * 1 / 3
+                                        height: parent.height
                                         rightPadding: 4
                                         font.pixelSize: 12
                                         font.weight: Font.Bold
                                         font.family: UIConfig.fontFamily
+                                        horizontalAlignment: Text.AlignRight
+                                        verticalAlignment: Text.AlignVCenter
                                         color: disable ? "red" : "#0F172A"
                                         text: disable ? "库存不足" : "X" + stock
                                     }
                                  }
-
 
                                  Item {
                                      Layout.fillWidth: true

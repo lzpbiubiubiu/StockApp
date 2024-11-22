@@ -61,5 +61,6 @@
         <file>Resources/Images/hide_pwd_dark.svg</file>
         <file>Qml/Component/StoragePanel.qml</file>
         <file>Qml/Component/OrderStockListPanel.qml</file>
+        <file>Resources/Images/test.png</file>
     </qresource>
 </RCC>

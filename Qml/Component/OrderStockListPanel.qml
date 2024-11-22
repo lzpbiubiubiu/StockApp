@@ -783,7 +783,7 @@ UIDrawer {
                     Rectangle {
                         id: rec
                         anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 8
+                        anchors.bottomMargin: 16
                         width: parent.width
                         height: 40
                         z: 1

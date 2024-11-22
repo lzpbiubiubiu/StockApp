@@ -19,6 +19,9 @@ namespace UI
             /** UUID */
             UUID_ROLE = Qt::UserRole + 1,
 
+            /** 商品码 */
+            CODE_ROLE,
+
             /** 名称 */
             NAME_ROLE,
 
@@ -40,6 +43,9 @@ namespace UI
         {
             /** UUID */
             QString uuid;
+
+            /** 商品编码 */
+            QString code;
 
             /** 商品名称 */
             QString name;
