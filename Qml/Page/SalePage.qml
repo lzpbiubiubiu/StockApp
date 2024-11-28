@@ -431,19 +431,6 @@ Page {
                 Layout.fillWidth: true
                 Layout.preferredHeight: (root.height * 0.4) - 101
                 visible: mainWindow.showNumPad
-
-                Connections {
-                    target: mainWindow
-                    onShowNumPadChanged: {
-                        if(mainWindow.showNumPad)
-                        {
-                            //numRec.visible = true
-                        }
-                        else{
-                            //numRec.visible = false
-                        }
-                    }
-                }
             }
 
             Rectangle {
@@ -451,6 +438,41 @@ Page {
                  Layout.preferredHeight: 50
                  color: "#FFFFFF"
                  visible: listView.count > 0
+
+                 // 直接扣减库存选项
+                 CheckBox {
+                     id: chkuat
+                     visible: false
+                     anchors.left: parent.left
+                     anchors.top: parent.top
+                     anchors.topMargin: -4
+                     width: 150
+                     height: 16
+                     spacing: 4
+                     z: 1
+
+                     indicator: Image {
+                         x: chkuat.leftPadding
+                         y: chkuatText.height / 2 - 2
+                         width: 16
+                         height: 16
+                         source: chkuat.checked ? "qrc:/Resources/Images/box_checked.svg" : "qrc:/Resources/Images/box_unchecked.svg"
+                     }
+
+                     contentItem: Text {
+                         id: chkuatText
+                         text: "直接扣减库存"
+                         height: parent.height
+                         font.pixelSize: 10
+                         font.family: UIConfig.fontFamily
+                         font.weight: Font.Medium
+                         color: "#000000"
+                         verticalAlignment: Text.AlignVCenter
+                         leftPadding: chkuat.indicator.width + chkuat.spacing
+                     }
+
+                     onClicked: {}
+                 }
 
                  UIButton {
                      id: deleteErrorWaresButton

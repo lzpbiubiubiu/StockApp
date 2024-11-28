@@ -62,5 +62,8 @@
         <file>Qml/Component/StoragePanel.qml</file>
         <file>Qml/Component/OrderStockListPanel.qml</file>
         <file>Resources/Images/test.png</file>
+        <file>Resources/Images/test.jpg</file>
+        <file>Resources/Images/box_checked.svg</file>
+        <file>Resources/Images/box_unchecked.svg</file>
     </qresource>
 </RCC>

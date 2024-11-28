@@ -60,6 +60,12 @@ namespace Core
         /** 单品促销金额 */
         qint64 promotionAmount = 0;
 
+        /** 商品图片显示Url */
+        QString imageUrl;
+
+        /** 商品图片显示Url */
+        QString imageMd5;
+
         /** 商品类型 */
         WareType wareType = WareType::WARE_TYPE_NORMAL;
 
@@ -146,7 +152,10 @@ namespace Core
             NORMAL = 1,
 
             /** 超级 */
-            SUPER = 2
+            SUPER = 2,
+
+            /** 备货员 */
+            STOCKER = 3
         };
 
         /** 账号 */

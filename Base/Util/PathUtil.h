@@ -45,5 +45,8 @@ namespace Base
 
         /** 获取补丁下载路径 C:/Users/用户/AppData/Local/Temp/Patch/App/ */
         static QString GetAppPatchDir();
+
+        /** 获取资源目录路径 C:/Users/用户/Documents/PosData/Assets/ */
+        static QString GetAssetsDir();
     };
 };

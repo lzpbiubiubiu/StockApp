@@ -7,12 +7,12 @@
 namespace UI
 {
     /** 首页商品面板数据 */
-    class StackWarePanelModel : public QAbstractListModel
+    class StockWarePanelModel : public QAbstractListModel
     {
         Q_OBJECT
     public:
-        StackWarePanelModel(QObject* parent);
-        ~StackWarePanelModel();
+        StockWarePanelModel(QObject* parent);
+        ~StockWarePanelModel();
 
         enum ItemRole
         {
@@ -35,11 +35,14 @@ namespace UI
             RETAIL_PRICE_ROLE,
 
             /** 使能 */
-            DISABLE_ROLE
+            DISABLE_ROLE,
+
+            /** 商品图片 */
+            IMG_ROLE,
         };
 
         /** 商品列表项 */
-        struct StackWareItem
+        struct StockWareItem
         {
             /** UUID */
             QString uuid;
@@ -59,18 +62,18 @@ namespace UI
             /** 库存 */
             QString stock;
 
+            /** 图片 */
+            QString imgUrl;
+
             /** 禁用 */
             bool disable = false;
         };
 
-        using StackWareItemPtr = QSharedPointer<StackWarePanelModel::StackWareItem>;
-        using StackWareItemPtrList = QList<QSharedPointer<StackWarePanelModel::StackWareItem>>;
-
         /** 设置列表数据 */
-        void SetItems(const QList<StackWareItem>& items);
+        void SetItems(const QList<StockWareItem>& items);
 
         /** 获取商品 */
-        StackWareItem GetItem(int index) const;
+        StockWareItem GetItem(int index) const;
 
         virtual int rowCount(const QModelIndex& parent = QModelIndex()) const override;
 
@@ -81,33 +84,36 @@ namespace UI
 
     private:
         // 商品列表
-        QList<StackWareItem> m_items;
+        QList<StockWareItem> m_items;
 
         // 当前修改商品的索引
         int m_currentIndex = 0;
     };
 
-    /** 购物面板 StackWarePanel */
-    class StackWarePanel : public QObject
+    /** 购物面板 StockWarePanel */
+    class StockWarePanel : public QObject
     {
         Q_OBJECT
         Q_PROPERTY(QObject* model MEMBER m_modelData CONSTANT)
     public:
-        StackWarePanel(QObject* parent = nullptr);
-        ~StackWarePanel();
+        StockWarePanel(QObject* parent = nullptr);
+        ~StockWarePanel();
 
         /** 获取UI商品数据 */
-        StackWarePanelModel::StackWareItem GetPanelItem(Core::WareItemPtr item) const;
+        StockWarePanelModel::StockWareItem GetPanelItem(Core::WareItemPtr item) const;
 
         /** 获取数据模型 */
-        StackWarePanelModel* GetModel() const;
+        StockWarePanelModel* GetModel() const;
 
         /** 初始化商品 */
         void InitWares();
 
+        /** 根据URL获取本地商品图片 */
+        Q_INVOKABLE QString loadLocalWare(const QString &uri);
+
     Q_SIGNALS:
 
     private:
-        StackWarePanelModel* m_modelData = nullptr;
+        StockWarePanelModel* m_modelData = nullptr;
     };
 }

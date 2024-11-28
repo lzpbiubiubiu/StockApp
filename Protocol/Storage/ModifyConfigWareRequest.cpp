@@ -47,11 +47,10 @@ namespace Net
         ASSIGN_FROM_STRING(val, "userAccount", Core::GlobalData::Get()->GetUser().account);
         ASSIGN_FROM_STRING(val, "userName", Core::GlobalData::Get()->GetUser().name);
         ASSIGN_FROM_STRING(val, "wareCode", m_wareCode);
-        ASSIGN_FROM_STRING(val, "wareName", m_wareName);
-        ASSIGN_FROM_INT64(val, "retailPrice", m_retailPrice);
-        ASSIGN_FROM_INT64(val, "wholeSalePrice", m_wholeSalePrice);
+        ASSIGN_FROM_STRING_IF_NOT_EMPTY(val, "wareName", m_wareName);
+        ASSIGN_FROM_INT64_IF_NOT_ZERO(val, "retailPrice", m_retailPrice);
+        ASSIGN_FROM_INT64_IF_NOT_ZERO(val, "wholeSalePrice", m_wholeSalePrice);
         ASSIGN_FROM_INT32(val, "operate", m_operate);
-        if(1 == m_operate)
-            ASSIGN_FROM_INT64(val, "stock", m_stock);
+        ASSIGN_FROM_INT64_IF_NOT_ZERO(val, "stock", m_stock);
     }
 }

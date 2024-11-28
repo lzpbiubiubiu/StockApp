@@ -47,14 +47,56 @@ namespace UI
 
     void ManagePageController::wareStorage(const QJsonObject& obj, int operate)
     {
-        UI::Application::Get()->GetMainWindow()->ShowLoading();
         Core::BusinessManager::StorageOperate storageOperage = static_cast<Core::BusinessManager::StorageOperate>(operate);
         Core::WareItemPtr item = Core::WareItemPtr::create();
+
+        bool enableUpdate =false;
         item->code = obj["code"].toString();
-        item->name = obj["name"].toString();
-        item->stock = obj["stock"].toVariant().toLongLong();
-        item->retailPrice = obj["retailPrice"].toVariant().toLongLong();
-        item->wholesalePrice = obj["wholesalePrice"].toVariant().toLongLong();
+        if(obj.contains("name"))
+        {
+            item->name = obj["name"].toString();
+            enableUpdate = true;
+        }
+
+        if(obj.contains("stock"))
+        {
+            item->stock = obj["stock"].toVariant().toLongLong();
+            if(0 == item->stock)
+            {
+                UI::Application::Get()->GetMainWindow()->ShowToast(QStringLiteral("商品库存不能为0"), TOAST_SHORT_DELAY);
+                return;
+            }
+            enableUpdate = true;
+        }
+
+        if(obj.contains("retailPrice"))
+        {
+            item->retailPrice = obj["retailPrice"].toVariant().toLongLong();
+            if(0 == item->retailPrice)
+            {
+                UI::Application::Get()->GetMainWindow()->ShowToast(QStringLiteral("商品零售价不能为0"), TOAST_SHORT_DELAY);
+                return;
+            }
+            enableUpdate = true;
+        }
+
+        if(obj.contains("wholesalePrice"))
+        {
+            item->wholesalePrice = obj["wholesalePrice"].toVariant().toLongLong();
+            if(0 == item->wholesalePrice)
+            {
+                UI::Application::Get()->GetMainWindow()->ShowToast(QStringLiteral("商品批发价不能为0"), TOAST_SHORT_DELAY);
+                return;
+            }
+            enableUpdate = true;
+        }
+
+        if(Core::BusinessManager::StorageOperate::WARE_UPDATE == storageOperage && !enableUpdate)
+        {
+            UI::Application::Get()->GetMainWindow()->ShowToast(QStringLiteral("更新商品必须填写一个值"), TOAST_SHORT_DELAY);
+            return;
+        }
+        UI::Application::Get()->GetMainWindow()->ShowLoading();
         m_businessManager->ConfigWareStorage(item, storageOperage);
     }
 

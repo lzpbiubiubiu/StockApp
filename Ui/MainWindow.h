@@ -10,6 +10,7 @@
 #include <QQuickWindow>
 #include <QSharedPointer>
 #include <QString>
+#include <QInputMethod>
 #include "Ui/Page/Page.h"
 
 namespace UI
@@ -21,9 +22,10 @@ namespace UI
         Q_PROPERTY(int loadingRefCount READ GetLoadingRefCount WRITE SetLoadingRefCount NOTIFY signalLoadingRefCountChanged)
         Q_PROPERTY(int pageIndex READ GetPageIndex NOTIFY signalPageIndexChanged)
         Q_PROPERTY(int saleWareKind READ GetSaleWareKind NOTIFY signalSaleWareKindChanged)
-        Q_PROPERTY(int returnWareKind READ GetReturnWareKind NOTIFY signalReturnWareKindChanged)
         Q_PROPERTY(bool showNumPad READ GetShowNumPad WRITE SetShowNumPad NOTIFY signalShowNumPadChanged)
+        Q_PROPERTY(bool showKeyboard READ GetShowKeyboard NOTIFY signalShowKeyboardChanged)
         Q_PROPERTY(bool superUser READ GetSuperUser NOTIFY signalSuperUserChanged)
+        Q_PROPERTY(bool isStocker READ GetIsStocker NOTIFY signalIsStockerChanged)
 
     public:
         enum PageIndex
@@ -79,10 +81,6 @@ namespace UI
         int GetSaleWareKind() const;
         void SetSaleWareKind(int saleWareKind);
 
-        /** 设置|获取当前入库品数 */
-        int GetReturnWareKind() const;
-        void SetReturnWareKind(int returnWareKind);
-
         /** 设置|获取是否显示数字键盘 */
         bool GetShowNumPad() const;
         void SetShowNumPad(bool show);
@@ -91,6 +89,14 @@ namespace UI
         bool GetSuperUser() const;
         void SetSuperUser(bool super);
 
+        /** 设置|获取是否仓库备货员 */
+        bool GetIsStocker() const;
+        void SetIsStocker(bool stocker);
+
+        /** 设置|获取是否显示系统键盘 */
+        bool GetShowKeyboard() const;
+        void SetShowKeyboard(bool show);
+
         /** 更新底部导航信息 */
         void UpdateToolBar();
 
@@ -98,6 +104,8 @@ namespace UI
         /** 处理登录信号返回 */
         void onLoginSuccess();
 
+        /** 键盘显示变化信号 */
+        void onKeyboardVisibleChanged();
     protected:
 
         /** 导出全局JS函数：当前界面蒙层计数器+1 */
@@ -118,19 +126,25 @@ namespace UI
         /** 导出全局JS函数, 切换到报表页面 */
         Q_INVOKABLE void switchReportPage();
 
+        /** 导出全局JS函数, 隐藏系统键盘 */
+        Q_INVOKABLE void hideKeyboard();
     Q_SIGNALS:
         void signalFullScreenChanged();
         void signalLoadingRefCountChanged();
         void signalPageIndexChanged();
         void signalSaleWareKindChanged();
-        void signalReturnWareKindChanged();
         void signalShowNumPadChanged();
         void signalSuperUserChanged();
+        void signalIsStockerChanged();
+        void signalShowKeyboardChanged();
     private:
         QQuickWindow* m_window = nullptr;
 
         // 所有页面
         QHash<QString, Page*> m_pages;
+
+        // 当前系统键盘对象
+        QInputMethod * m_keyboard = nullptr;
 
         // 当前页面
         QString m_currentPageName;
@@ -150,14 +164,17 @@ namespace UI
         // 当前选择的出库购物车商品品数
         int m_saleWareKind = 0;
 
-        // 当前选择的入库购物车商品品数
-        int m_returnWareKind = 0;
-
         // 是否显示数字键盘
         bool m_showNumPad = false;
 
         // 是否超级用户
         bool m_superUser = true;
+
+        // 是否仓库备货员
+        bool m_isStocker = false;
+
+        // 是否显示系统键盘
+        bool m_showKeyboard = false;
 
     };
 } // namespace UI

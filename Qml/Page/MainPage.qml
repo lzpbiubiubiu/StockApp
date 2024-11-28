@@ -74,8 +74,8 @@ Page {
                      clip: true
                      boundsBehavior:Flickable.DragOverBounds
                      cellWidth: width/ 2
-                     cellHeight: 150
-                     model: page.stackWarePanel.model
+                     cellHeight: 180
+                     model: page.stockWarePanel.model
                      delegate: Rectangle {
                          width: wareView.cellWidth
                          height: wareView.cellHeight
@@ -94,13 +94,13 @@ Page {
 
                                  Item {
                                      Layout.fillWidth: true
-                                     Layout.preferredHeight: 72
+                                     Layout.preferredHeight: 102
 
                                      Image {
                                          id: wareImage
                                          anchors.fill: parent
-                                         source: "qrc:/Resources/Images/default_ware.svg"
-                                         //source: "qrc:/Resources/Images/test.png"
+                                         //source: "qrc:/Resources/Images/default_ware.svg"
+                                         source: page.stockWarePanel.loadLocalWare(imgUrl)
                                      }
 
                                      // 商品编码码
@@ -143,7 +143,7 @@ Page {
                                                  font.weight: Font.Bold
                                                  maximumLineCount: 1
                                                  elide: Text.ElideRight
-                                                 color: "#616E80"
+                                                 color: "#D3D3D3"
                                                  text: code
                                                  horizontalAlignment: Text.AlignLeft
                                                  verticalAlignment: Text.AlignVCenter

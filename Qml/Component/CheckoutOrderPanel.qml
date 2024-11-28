@@ -55,9 +55,9 @@ UIDrawer {
 
     Component.onCompleted: {
         root.__inputData = {}
-        root.wholeOrderPromoAmt = 0
-        root.deliveryFeesAmt = 0
-        root.remarkText = ""
+        root.__inputData.wholeOrderPromoAmt = 0
+        root.__inputData.deliveryFeesAmt = 0
+        root.__inputData.remarkText = ""
     }
 
     //内容区域
@@ -433,7 +433,7 @@ UIDrawer {
                 onClicked: {
                     if (!amountInput.containsMouse) {
                         amountInput.focus = false
-                        itemId.visible = false
+                        mainWindow.hideKeyboard()
                     }
 
                 }
@@ -498,7 +498,7 @@ UIDrawer {
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.topMargin: 16
+                        anchors.topMargin: 12
                         spacing: 0
 
                         // 输入金额
@@ -518,10 +518,10 @@ UIDrawer {
 
                             //焦点变化
                             onActiveFocusChanged: {
-                                if(activeFocus)
-                                    itemId.visible = true
-                                else
-                                    itemId.visible = false
+//                                if(activeFocus)
+//                                    itemId.visible = true
+//                                else
+//                                    itemId.visible = false
                             }
 
                             onSignalOnEnterPressed: {
@@ -589,9 +589,9 @@ UIDrawer {
 
                         Item {
                             id: itemId
-                            Layout.preferredHeight: root.height * 0.4
+                            Layout.preferredHeight: root.height * 0.45
                             Layout.fillWidth: true
-                            visible: false
+                            visible: mainWindow.showKeyboard
                         }
                     }
                 }
@@ -644,7 +644,7 @@ UIDrawer {
                 onClicked: {
                     if (!textArea.containsMouse) {
                         textArea.focus = false
-                        itemId.visible = false
+                        mainWindow.hideKeyboard()
                     }
 
                 }
@@ -709,7 +709,7 @@ UIDrawer {
 
                     ColumnLayout {
                         anchors.fill: parent
-                        anchors.topMargin: 16
+                        anchors.topMargin: 12
                         spacing: 0
 
                         Rectangle {
@@ -718,7 +718,7 @@ UIDrawer {
                             border.color: "#F5F5F5"
                             border.width: 1
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 110
+                            Layout.preferredHeight: 80
                             Layout.rightMargin: 12
                             Layout.leftMargin: 12
                             radius: 2
@@ -756,10 +756,6 @@ UIDrawer {
 
                                     //焦点变化
                                     onActiveFocusChanged: {
-                                        if(activeFocus)
-                                            itemId.visible = true
-                                        else
-                                            itemId.visible = false
                                     }
 
                                     Keys.priority: Keys.AfterItem
@@ -821,9 +817,9 @@ UIDrawer {
 
                         Item {
                             id: itemId
-                            Layout.preferredHeight: root.height * 0.4
+                            Layout.preferredHeight: root.height * 0.45
                             Layout.fillWidth: true
-                            visible: false
+                            visible: mainWindow.showKeyboard
                         }
                     }
                 }

@@ -1,41 +1,42 @@
-﻿#include "StackWarePanel.h"
+﻿#include "StockWarePanel.h"
 #include <QDebug>
 #include <QtMath>
 #include "Base/Common/ServiceManager.h"
 #include "Base/Util/PriceUtil.h"
+#include "Base/Util/PathUtil.h"
 #include "Core/BusinessManager.h"
 
 namespace UI
 {
-    StackWarePanelModel::StackWarePanelModel(QObject* parent)
+    StockWarePanelModel::StockWarePanelModel(QObject* parent)
         : QAbstractListModel(parent)
     {}
 
-    StackWarePanelModel::~StackWarePanelModel()
+    StockWarePanelModel::~StockWarePanelModel()
     {}
 
-    void StackWarePanelModel::SetItems(const QList<StackWareItem>& items)
+    void StockWarePanelModel::SetItems(const QList<StockWareItem>& items)
     {
         beginResetModel();
         m_items = items;
         endResetModel();
     }
 
-    StackWarePanelModel::StackWareItem StackWarePanelModel::GetItem(int index) const
+    StockWarePanelModel::StockWareItem StockWarePanelModel::GetItem(int index) const
     {
-        StackWareItem item;
+        StockWareItem item;
         if(index >= 0 && index < m_items.size())
             item = m_items[index];
         return item;
     }
 
 
-    int StackWarePanelModel::rowCount(const QModelIndex& parent) const
+    int StockWarePanelModel::rowCount(const QModelIndex& parent) const
     {
         return m_items.size();
     }
 
-    QVariant StackWarePanelModel::data(const QModelIndex& index, int role) const
+    QVariant StockWarePanelModel::data(const QModelIndex& index, int role) const
     {
         auto& itemData = m_items[index.row()];
         QVariant value;
@@ -62,13 +63,16 @@ namespace UI
         case ItemRole::DISABLE_ROLE:
             value = itemData.disable;
             break;
+        case ItemRole::IMG_ROLE:
+            value = itemData.imgUrl;
+            break;
         default:
             break;
         }
         return value;
     }
 
-    QHash<int, QByteArray> StackWarePanelModel::roleNames() const
+    QHash<int, QByteArray> StockWarePanelModel::roleNames() const
     {
         QHash<int, QByteArray> roles;
         roles[ItemRole::UUID_ROLE] = "uuid";
@@ -78,45 +82,62 @@ namespace UI
         roles[ItemRole::WHOLESALE_PRICE_ROLE] = "wholesalePrice";
         roles[ItemRole::RETAIL_PRICE_ROLE] = "retailPrice";
         roles[ItemRole::DISABLE_ROLE] = "disable";
+        roles[ItemRole::IMG_ROLE] = "imgUrl";
         return roles;
     }
 
-    StackWarePanel::StackWarePanel(QObject* parent)
+    StockWarePanel::StockWarePanel(QObject* parent)
         : QObject(parent)
     {
-        m_modelData = new StackWarePanelModel(this);
+        m_modelData = new StockWarePanelModel(this);
     }
 
-    StackWarePanel::~StackWarePanel()
+    StockWarePanel::~StockWarePanel()
     {
 
     }
 
-    StackWarePanelModel* StackWarePanel::GetModel() const
+    StockWarePanelModel* StockWarePanel::GetModel() const
     {
         return m_modelData;
     }
 
-    StackWarePanelModel::StackWareItem StackWarePanel::GetPanelItem(Core::WareItemPtr item) const
+    StockWarePanelModel::StockWareItem StockWarePanel::GetPanelItem(Core::WareItemPtr item) const
     {
-        StackWarePanelModel::StackWareItem wareItem;
+        StockWarePanelModel::StockWareItem wareItem;
         wareItem.name = item->name;
         wareItem.code = item->code;
         wareItem.wholesalePrice = Base::PriceUtil::FenToString(item->wholesalePrice);
         wareItem.retailPrice = Base::PriceUtil::FenToString(item->retailPrice);
         wareItem.uuid = item->uuid;
         wareItem.stock = QString::number(item->stock);
+        wareItem.imgUrl = item->imageUrl;
         wareItem.disable = (0 == item->stock);
         return wareItem;
     }
 
-    void StackWarePanel::InitWares()
+    void StockWarePanel::InitWares()
     {
-        QList<StackWarePanelModel::StackWareItem> wareItemList;
+        QList<StockWarePanelModel::StockWareItem> wareItemList;
         for(auto& item : Base::GetService<Core::BusinessManager>()->GetConfigWares())
         {
             wareItemList << GetPanelItem(item);
         }
         m_modelData->SetItems(wareItemList);
+    }
+
+    QString StockWarePanel::loadLocalWare(const QString &uri)
+    {
+        QString path = Base::PathUtil::GetAssetsDir().append("wareImage/");
+        QUrl url(uri);
+        if(url.isValid())
+        {
+            QString fileName = url.fileName();
+            if(QFile::exists(path + fileName))
+            {
+                return "file:///" + path + fileName;
+            }
+        }
+        return "qrc:/Resources/Images/default_ware.svg";
     }
 }

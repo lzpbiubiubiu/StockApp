@@ -108,9 +108,10 @@ UIDrawer {
                             Component.onCompleted: {
                                 item.inputData = {}
                                 item.dataLsitModel = [{"inputDataKey": "code", "required": true, "tipText":"商品编码", "placeholderText":"请输入商品编码", "showKeybord": true, "regExp": "^[A-Za-z0-9]+$"},
-                                                      {"inputDataKey": "name", "required": true, "tipText":"商品名称", "placeholderText":"请输入商品名称", "showKeybord": true, "regExp": ".*"},
-                                                      {"inputDataKey": "retailPrice", "required": true, "tipText":"商品零售价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"},
-                                                      {"inputDataKey": "wholesalePrice", "required": true, "tipText":"商品批发价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"}]
+                                                      {"inputDataKey": "name", "required": false, "tipText":"商品名称", "placeholderText":"请输入商品名称", "showKeybord": true, "regExp": ".*"},
+                                                      {"inputDataKey": "stock", "required": false, "tipText":"商品库存", "placeholderText":"请输入商品库存", "showKeybord": false, "regExp": "^[0-9]+$"},
+                                                      {"inputDataKey": "retailPrice", "required": false, "tipText":"商品零售价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"},
+                                                      {"inputDataKey": "wholesalePrice", "required": false, "tipText":"商品批发价", "placeholderText":"请输入价格", "showKeybord": false, "regExp": "^(0|[1-9]\\d{0,7})(\\.)\\d{0,2}$"}]
                             }
                         }
                     }
@@ -137,15 +138,15 @@ UIDrawer {
                 ListView {
                     id: listView
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 30 * listView.count + 12 * (listView.count - 1)
-                    Layout.topMargin: 12
+                    Layout.preferredHeight: 30 * listView.count + 8 * (listView.count - 1)
+                    Layout.topMargin: 8
                     model: dataLsitModel
 
                     cacheBuffer: 1000
                     //消除反弹效果
                     boundsBehavior:Flickable.StopAtBounds
                     maximumFlickVelocity: 2500
-                    spacing: 12
+                    spacing: 8
                     clip: true
                     currentIndex: 0
 
@@ -198,14 +199,12 @@ UIDrawer {
                                             if(activeFocus){
                                                 numPad.visible = false
                                                 rec.visible = true
-                                                itemId.visible = true
                                             }
-                                            else{
-                                                itemId.visible = false
-                                            }
-
                                         }
                                         else{
+                                            // 当焦点不在商品名称输入框，隐藏系统键盘
+                                            mainWindow.hideKeyboard()
+
                                             if(activeFocus){
                                                 numPad.visible = true
                                                 rec.visible = false
@@ -213,10 +212,13 @@ UIDrawer {
                                         }
                                     }
                                     onSignalTextChanged: {
+                                        if("" === text){
+                                            delete inputData.modelData.inputDataKey
+                                            return
+                                        }
+
                                         if("retailPrice" === modelData.inputDataKey
                                            || "wholesalePrice" === modelData.inputDataKey){
-
-                                            console.log("modelData.inputDataKe============>", modelData.inputDataKey)
                                             inputData[modelData.inputDataKey] = parseFloat(text) * 100
                                         }
                                         else if("stock" === modelData.inputDataKey){
@@ -228,7 +230,7 @@ UIDrawer {
                                     }
 
                                     onSignalOnEnterPressed: {
-                                        if("" === textInput.text)
+                                        if("" === textInput.text && modelData.required)
                                         {
                                             return
                                         }
@@ -290,7 +292,7 @@ UIDrawer {
                     Layout.fillWidth: true
                     Layout.bottomMargin: 8
                     enterKeyText: "确定"
-                    cancelBtnText: "清除"
+                    cancelBtnText: "取消"
                     onSignalCancelButtonClicked: {
                         numPad.visible = false
                         rec.visible = true
@@ -300,8 +302,8 @@ UIDrawer {
 
                 Item {
                     id: itemId
-                    visible: false
-                    Layout.preferredHeight: root.height * 0.4
+                    visible: mainWindow.showKeyboard
+                    Layout.preferredHeight: root.height * 0.45
                     Layout.fillWidth: true
                 }
             }
@@ -318,6 +320,9 @@ UIDrawer {
 
         for (var i = 0; i <  listViewItem.count; i++) {
             var itemData = inputData[listViewItem.model[i].inputDataKey]
+            if(!listViewItem.model[i].required){
+                continue
+            }
             if(typeof itemData === 'undefined' || "" === itemData){
                 listViewItem.currentIndex = i
                 return false

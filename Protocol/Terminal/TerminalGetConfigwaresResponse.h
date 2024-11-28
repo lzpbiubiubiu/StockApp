@@ -24,6 +24,12 @@ namespace Net
             /** 单品批发价格 */
             qint64 wholesalePrice = 0;
 
+            /** 商品图片下载路径 */
+            QString imageUrl;
+
+            /** 商品图片Md5 */
+            QString imageMd5;
+
             /** 扩展字段 */
             QJsonObject extension;
         };

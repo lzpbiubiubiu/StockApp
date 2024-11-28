@@ -97,7 +97,6 @@ UIDrawer {
                         source: "qrc:/Resources/Images/loading.gif"
                         smooth: true
                         visible: page.orderStockListPanel.querying
-                        //paused: !quickRecycleWarePanel.showRefreshAnimation
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.verticalCenter: parent.verticalCenter
                     }

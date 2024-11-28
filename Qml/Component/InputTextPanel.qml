@@ -65,7 +65,7 @@ UIDrawer {
                 onClicked: {
                     if (!textInput.containsMouse) {
                         textInput.focus = false
-                        itemId.visible = false
+                        mainWindow.hideKeyboard()
                     }
 
                 }
@@ -135,10 +135,6 @@ UIDrawer {
 
                             //焦点变化
                             onActiveFocusChanged: {
-                                if(activeFocus)
-                                    itemId.visible = true
-                                else
-                                    itemId.visible = false
                             }
 
                             onSignalOnEnterPressed: {
@@ -235,7 +231,7 @@ UIDrawer {
                 onClicked: {
                     if (!textArea.containsMouse) {
                         textArea.focus = false
-                        itemId.visible = false
+                        mainWindow.hideKeyboard()
                     }
 
                 }
@@ -332,10 +328,6 @@ UIDrawer {
 
                                     //焦点变化
                                     onActiveFocusChanged: {
-                                        if(activeFocus)
-                                            itemId.visible = true
-                                        else
-                                            itemId.visible = false
                                     }
 
                                     Keys.priority: Keys.AfterItem
@@ -406,7 +398,7 @@ UIDrawer {
                             id: itemId
                             Layout.preferredHeight: root.height * 0.4
                             Layout.fillWidth: true
-                            visible: false
+                            visible: mainWindow.showKeyboard
                         }
                     }
                 }

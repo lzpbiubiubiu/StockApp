@@ -74,7 +74,7 @@ namespace UI
         MainPage* m_page = nullptr;
 
         // 首页商品列表面板
-        StackWarePanel* m_stackWarePanel = nullptr;
+        StockWarePanel* m_stockWarePanel = nullptr;
 
         // 业务管理器
         Core::BusinessManager* m_businessManager = nullptr;

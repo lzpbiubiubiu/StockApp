@@ -1,6 +1,9 @@
 ﻿#include "MainPageController.h"
 #include "Base/Common/ServiceManager.h"
 #include "Base/Log/Log.h"
+#include "Base/Util/PathUtil.h"
+#include "Base/Util/MathUtil.h"
+#include "Core/DownloadManager.h"
 #include "Application.h"
 namespace UI
 {
@@ -8,7 +11,7 @@ namespace UI
         : PageController(parent)
     {
         m_page = GetPage<MainPage>();
-        m_stackWarePanel = m_page->GetStackWarePanel();
+        m_stockWarePanel = m_page->GetStockWarePanel();
         m_businessManager = Base::GetService<Core::BusinessManager>();
         connect(Base::ServiceManager::Get(), &Base::ServiceManager::signalLoaded, this, &MainPageController::onLoaded);
         connect(Base::ServiceManager::Get(), &Base::ServiceManager::signalLoadError, this, &MainPageController::onSignalError);
@@ -64,7 +67,29 @@ namespace UI
 
     void MainPageController::onLoadConfigWaresSuccess()
     {
-        m_stackWarePanel->InitWares();
+        QString path = Base::PathUtil::GetAssetsDir().append("wareImage/");
+        QDir dir;// Need standard path
+        dir.mkpath(path);
+        dir.setPath(path);
+
+        QList<StockWarePanelModel::StockWareItem> wareItemList;
+        auto downLoadMgr = Base::GetService<Core::DownloadManager>();
+        for(auto& item : Base::GetService<Core::BusinessManager>()->GetConfigWares())
+        {
+            QUrl url(item->imageUrl);
+            QString fileName = url.fileName();
+            if(!fileName.isEmpty() && dir.exists(fileName))
+            {
+                if(Base::MathUtil::GetFileMD5(Base::PathUtil::GetAssetsDir().append("wareImage/") + fileName) == item->imageMd5)
+                {
+                    continue;
+                }
+                QFile::remove(fileName);
+            }
+            downLoadMgr->Download(item->imageUrl, Base::PathUtil::GetAssetsDir().append("wareImage/").append(fileName), 180, 1, item->imageMd5);
+        }
+
+        m_stockWarePanel->InitWares();
         m_page->SetFetching(false);
     }
 

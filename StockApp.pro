@@ -33,6 +33,7 @@ SOURCES += \
         Core/BusinessManager.cpp \
         Core/ConvertUtil.cpp \
         Core/DatabaseManager.cpp \
+        Core/DownloadManager.cpp \
         Core/GarbageManager.cpp \
         Core/GlobalData.cpp \
         Core/KeyEmitter.cpp \
@@ -62,7 +63,7 @@ SOURCES += \
         Protocol/Terminal/TerminalUserLoginResponse.cpp \
         Ui/Component/OrderStockListPanel.cpp \
         Ui/Component/SaleWarePanel.cpp \
-        Ui/Component/StackWarePanel.cpp \
+        Ui/Component/StockWarePanel.cpp \
         Ui/Page/Controller/LoginPageController.cpp \
         Ui/Page/Controller/MainPageController.cpp \
         Ui/Page/Controller/ManagePageController.cpp \
@@ -136,6 +137,7 @@ HEADERS += \
     Core/Config.h \
     Core/ConvertUtil.h \
     Core/DatabaseManager.h \
+    Core/DownloadManager.h \
     Core/GarbageManager.h \
     Core/GlobalData.h \
     Core/KeyEmitter.h \
@@ -166,7 +168,7 @@ HEADERS += \
     Protocol/Terminal/TerminalUserLoginResponse.h \
     Ui/Component/OrderStockListPanel.h \
     Ui/Component/SaleWarePanel.h \
-    Ui/Component/StackWarePanel.h \
+    Ui/Component/StockWarePanel.h \
     Ui/MainWindow.h \
     Ui/Page/Controller/LoginPageController.h \
     Ui/Page/Controller/MainPageController.h \

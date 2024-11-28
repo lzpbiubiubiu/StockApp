@@ -51,6 +51,7 @@ namespace Core
         request->SetUrl(urlParam.url);
         request->SetTimeout(urlParam.timeout);
         Net::HttpModule::Get()->ProcessRequest(request, response, true);
+        QString imageUrl;
         if(response->IsOk())
         {
             m_configWares.clear();
@@ -65,6 +66,8 @@ namespace Core
                 wareItemPtr->wholesalePrice = item.wholesalePrice;
                 wareItemPtr->stock = item.stock;
                 wareItemPtr->code = item.code;
+                wareItemPtr->imageUrl = item.imageUrl;
+                wareItemPtr->imageMd5 = item.imageMd5;
                 wareItemPtr->extension = item.extension;
                 m_configWares << wareItemPtr;
             }
@@ -820,6 +823,8 @@ namespace Core
         request->SetName(item->name);
         request->SetRetailPrice(item->retailPrice);
         request->SetWholeSalePrice(item->wholesalePrice);
+        request->SetStock(item->stock);
+        request->SetOperate(operate);
         if(StorageOperate::WARE_UPDATE == operate)
         {
             request->SetOperate(2);
@@ -827,7 +832,6 @@ namespace Core
         else
         {
             request->SetOperate(1);
-            request->SetStock(item->stock);
         }
         auto urlParam = Base::GetService<Core::UrlManager>()->GetUrl(Core::UrlManager::MODIFY_CONFIG_WARE);
         request->SetUrl(urlParam.url);

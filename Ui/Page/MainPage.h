@@ -1,14 +1,14 @@
 ﻿#pragma once
 
 #include "Page.h"
-#include "Ui/Component/StackWarePanel.h"
+#include "Ui/Component/StockWarePanel.h"
 
 namespace UI
 {
     class MainPage : public Page
     {
         Q_OBJECT
-        Q_PROPERTY(QObject* stackWarePanel MEMBER m_stackWarePanel CONSTANT)
+        Q_PROPERTY(QObject* stockWarePanel MEMBER m_stockWarePanel CONSTANT)
         Q_PROPERTY(bool fetching READ GetFetching NOTIFY signalFetchingChanged)
         DECLARE_PAGE()
 
@@ -18,7 +18,7 @@ namespace UI
         virtual ~MainPage();
 
         /** 获取商品加购面板 */
-        StackWarePanel* GetStackWarePanel() const;
+        StockWarePanel* GetStockWarePanel() const;
 
         /** 设置|获取是否拉取配置中*/
         bool GetFetching();
@@ -33,7 +33,7 @@ namespace UI
     private:
 
         // 首页商品列表面板
-        StackWarePanel* m_stackWarePanel = nullptr;
+        StockWarePanel* m_stockWarePanel = nullptr;
 
         // 首页商品拉取中
         bool m_fetching = true;

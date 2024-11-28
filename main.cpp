@@ -7,6 +7,7 @@
 #include "Core/BusinessManager.h"
 #include "Core/SequenceGenerator.h"
 #include "Core/UrlManager.h"
+#include "Core/DownloadManager.h"
 #include "Core/GarbageManager.h"
 int main(int argc, char *argv[])
 {
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
 
     Base::ServiceManager::Get()->AddService<Core::DatabaseManager>();
     Base::ServiceManager::Get()->AddService<Core::UrlManager>();
+    Base::ServiceManager::Get()->AddService<Core::DownloadManager>();
     Base::ServiceManager::Get()->AddService<Core::SequenceGenerator>();
     Base::ServiceManager::Get()->AddService<Core::GarbageManager>();
     Base::ServiceManager::Get()->AddService<Core::BusinessManager>();

@@ -40,7 +40,7 @@ Rectangle {
 
         Item {
             id: homeItem
-            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser ? 4 : 3)
+            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser || mainWindow.isStocker ? 4 : 3)
             Layout.fillHeight: true
 
             UILabelButton {
@@ -65,7 +65,7 @@ Rectangle {
 
         Item {
             id: saleItem
-            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser ? 4 : 3)
+            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser || mainWindow.isStocker ? 4 : 3)
             Layout.fillHeight: true
 
             UILabelButton {
@@ -110,13 +110,13 @@ Rectangle {
         }
 
         Item {
-            id: returnItem
-            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser ? 4 : 3)
+            id: manageItem
+            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser || mainWindow.isStocker ? 4 : 3)
             Layout.fillHeight: true
-            visible: mainWindow.superUser
+            visible: mainWindow.superUser || mainWindow.isStocker
 
             UILabelButton {
-                id: returnButton
+                id: manageButton
                 anchors.centerIn: parent
                 width: 54
                 height:parent.height
@@ -133,32 +133,11 @@ Rectangle {
                     mainWindow.switchManagePage();
                 }
             }
-
-            //按钮右上角入库商品品数显示
-            Rectangle {
-                anchors.right: returnButton.right
-                anchors.top: returnButton.top
-                width: returnText.width > 12 ? returnText.width : 12
-                height: 12
-                color: "#FF545E"
-                visible: mainWindow.returnWareKind > 0
-
-                Text {
-                    id: returnText
-                    anchors.centerIn: parent
-                    text: mainWindow.returnWareKind
-                    font.pixelSize: 10
-                    font.family: UIConfig.fontFamily
-                    font.weight: Font.Bold
-                    color: "#FFFFFF"
-                }
-                radius: 6
-            }
         }
 
         Item {
             id: statementItem
-            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser ? 4 : 3)
+            Layout.preferredWidth: (parent.width - 20) / (mainWindow.superUser || mainWindow.isStocker ? 4 : 3)
             Layout.fillHeight: true
 
             UILabelButton {

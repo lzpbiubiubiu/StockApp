@@ -143,4 +143,10 @@ namespace Base
         static QString tempDir = GetTempDir() + "Patch/App/";
         return CreateDir(tempDir);
     }
+
+    QString PathUtil::GetAssetsDir()
+    {
+        static QString dirPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/StockApp/Assets/";
+        return CreateDir(dirPath);
+    }
 }

@@ -25,6 +25,7 @@ Page {
 
             UIButton {
                 id: storageBtn
+                visible: mainWindow.superUser
                 Layout.preferredWidth: 150
                 Layout.preferredHeight: 30
                 Layout.alignment: Qt.AlignHCenter

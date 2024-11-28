@@ -15,6 +15,7 @@ namespace UI
         engine->rootContext()->setContextProperty("mainWindow", this);
         QQmlComponent component(engine.data(), QUrl(QStringLiteral("qrc:/Qml/MainWindow.qml")));
         m_window = qobject_cast<QQuickWindow*>(component.create());
+        m_keyboard = QGuiApplication::inputMethod();
         Q_ASSERT_X(m_window != nullptr, "MainWindow", component.errorString().toUtf8());
         m_window->setScreen(QApplication::primaryScreen());
         engine->rootContext()->setContextProperty("mainFrame", m_window);
@@ -23,6 +24,8 @@ namespace UI
         SetFullScreen(true);
 #endif // !DEBUG
         connect(Base::GetService<Core::BusinessManager>(), &Core::BusinessManager::signalLoginSuccess, this, &MainWindow::onLoginSuccess);
+        if(m_keyboard)
+            connect(m_keyboard, &QInputMethod::visibleChanged, this, &MainWindow::onKeyboardVisibleChanged);
     }
 
     MainWindow::~MainWindow()
@@ -209,20 +212,6 @@ namespace UI
         }
     }
 
-    int MainWindow::GetReturnWareKind() const
-    {
-        return m_returnWareKind;
-    }
-
-    void MainWindow::SetReturnWareKind(int returnWareKind)
-    {
-        if(m_returnWareKind != returnWareKind)
-        {
-            m_returnWareKind = returnWareKind;
-            emit signalReturnWareKindChanged();
-        }
-    }
-
     void MainWindow::UpdateToolBar()
     {
         auto businessManager = Base::GetService<Core::BusinessManager>();
@@ -248,6 +237,20 @@ namespace UI
         }
     }
 
+    bool MainWindow::GetShowKeyboard() const
+    {
+        return m_showKeyboard;
+    }
+
+    void MainWindow::SetShowKeyboard(bool show)
+    {
+        if(m_showKeyboard != show)
+        {
+            m_showKeyboard = show;
+            emit signalShowKeyboardChanged();
+        }
+    }
+
     bool MainWindow::GetSuperUser() const
     {
         return m_superUser;
@@ -262,9 +265,40 @@ namespace UI
         }
     }
 
+    bool MainWindow::GetIsStocker() const
+    {
+        return m_isStocker;
+    }
+
+    void MainWindow::SetIsStocker(bool stocker)
+    {
+        if(m_isStocker != stocker)
+        {
+            m_isStocker = stocker;
+            emit signalIsStockerChanged();
+        }
+    }
+
     void MainWindow::onLoginSuccess()
     {
         SetSuperUser(Core::User::Status::SUPER == Core::GlobalData::Get()->GetUser().status);
+        SetIsStocker(Core::User::Status::STOCKER == Core::GlobalData::Get()->GetUser().status);
+    }
+
+    void MainWindow::onKeyboardVisibleChanged()
+    {
+        if(m_keyboard)
+        {
+            SetShowKeyboard(m_keyboard->isVisible());
+        }
+    }
+
+    void MainWindow::hideKeyboard()
+    {
+        if(m_keyboard)
+        {
+            m_keyboard->setVisible(false);
+        }
     }
 
 } // namespace UI

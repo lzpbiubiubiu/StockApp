@@ -8,7 +8,7 @@ namespace UI
     MainPage::MainPage(QObject* parent/* = nullptr*/)
         : Page(parent)
     {
-        m_stackWarePanel = new StackWarePanel(this);
+        m_stockWarePanel = new StockWarePanel(this);
         SetContentItem("qrc:/Qml/Page/MainPage.qml");
         SetController(new MainPageController(this));
     }
@@ -17,9 +17,9 @@ namespace UI
     {
     }
 
-    StackWarePanel* MainPage::GetStackWarePanel() const
+    StockWarePanel* MainPage::GetStockWarePanel() const
     {
-        return m_stackWarePanel;
+        return m_stockWarePanel;
     }
 
     bool MainPage::GetFetching()
