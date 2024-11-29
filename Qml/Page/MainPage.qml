@@ -124,6 +124,7 @@ Page {
                                                  radius: 2
 
                                                  Text {
+                                                     id: title
                                                      anchors.centerIn: parent
                                                      text: "#"
                                                      font.pixelSize: 11
@@ -135,15 +136,16 @@ Page {
                                              }
 
                                              Text {
+                                                 visible: false
                                                  Layout.fillHeight: true
                                                  Layout.fillWidth: true
                                                  Layout.alignment: Qt.AlignVCenter
                                                  font.family: UIConfig.fontFamily
-                                                 font.pixelSize: 9
-                                                 font.weight: Font.Bold
+                                                 font.pixelSize: 8
+                                                 font.weight: Font.Normal
                                                  maximumLineCount: 1
                                                  elide: Text.ElideRight
-                                                 color: "#D3D3D3"
+                                                 color: "#0FC269"
                                                  text: code
                                                  horizontalAlignment: Text.AlignLeft
                                                  verticalAlignment: Text.AlignVCenter

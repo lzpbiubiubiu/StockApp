@@ -72,7 +72,6 @@ namespace UI
         dir.mkpath(path);
         dir.setPath(path);
 
-        QList<StockWarePanelModel::StockWareItem> wareItemList;
         auto downLoadMgr = Base::GetService<Core::DownloadManager>();
         for(auto& item : Base::GetService<Core::BusinessManager>()->GetConfigWares())
         {
@@ -87,6 +86,7 @@ namespace UI
                 QFile::remove(fileName);
             }
             downLoadMgr->Download(item->imageUrl, Base::PathUtil::GetAssetsDir().append("wareImage/").append(fileName), 180, 1, item->imageMd5);
+            //downLoadMgr->Download(item->imageUrl, Base::PathUtil::GetAssetsDir().append("wareImage/").append(fileName), 180, 1);
         }
 
         m_stockWarePanel->InitWares();
