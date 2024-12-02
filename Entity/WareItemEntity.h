@@ -46,6 +46,12 @@ namespace Sql
         // 促销金额
         ORM_REGISTER_COLUMN(qint64, PromotionAmount, "promotion_amount")
 
+        // 商品图片url
+        ORM_REGISTER_COLUMN(QString, ImageUrl, "image_url")
+
+        // 促销图片md5
+        ORM_REGISTER_COLUMN(QString, ImageMd5, "image_md5")
+
         // 扩展字段（通常是JSON格式字符串）
         ORM_REGISTER_COLUMN(QString, Extension, "extension")
     };

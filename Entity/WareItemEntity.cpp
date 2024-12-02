@@ -22,6 +22,8 @@ namespace Orm
         member = ORM_REGISTER_QD_DATA(WareItemEntity, Price, WARE_ITEM_TABLE_VERSION_V1)
         member = ORM_REGISTER_QD_DATA(WareItemEntity, DiscountPrice, WARE_ITEM_TABLE_VERSION_V1)
         member = ORM_REGISTER_QD_DATA(WareItemEntity, PromotionAmount, WARE_ITEM_TABLE_VERSION_V1)
+        member = ORM_REGISTER_QD_DATA(WareItemEntity, ImageUrl, WARE_ITEM_TABLE_VERSION_V1)
+        member = ORM_REGISTER_QD_DATA(WareItemEntity, ImageMd5, WARE_ITEM_TABLE_VERSION_V1)
         member = ORM_REGISTER_QD_DATA(WareItemEntity, Extension, WARE_ITEM_TABLE_VERSION_V1)
     }
 }

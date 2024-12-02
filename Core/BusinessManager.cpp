@@ -117,6 +117,11 @@ namespace Core
         QMetaObject::invokeMethod(this, "onSubmitSaleOrder", Q_ARG(qint64, wholeOrderPromoAmt), Q_ARG(qint64, deliveryFeesAmt), Q_ARG(QString, remarkText));
     }
 
+    void BusinessManager::OrderChangeSubmit(qint64 wholeOrderChangeAmt, qint64 deliveryFeesAmt, const QString& remarkText)
+    {
+        QMetaObject::invokeMethod(this, "onOrderChangeSubmit", Q_ARG(qint64, wholeOrderChangeAmt), Q_ARG(qint64, deliveryFeesAmt), Q_ARG(QString, remarkText));
+    }
+
     void BusinessManager::UpdateAppCache(const QString& ip, int port)
     {
         QMetaObject::invokeMethod(this, "onUpdateAppCache", Q_ARG(QString, ip), Q_ARG(int, port));
@@ -738,6 +743,19 @@ namespace Core
         emit signalRestoreOrderSuccess();
     }
 
+    void BusinessManager::onOrderChangeSubmit(qint64 wholeOrderChangeAmt, qint64 deliveryFeesAmt, const QString& remarkText)
+    {
+        if(!m_saleOrder)
+        {
+            emit signalSubmitSaleOrderError(QStringLiteral("订单不存在"));
+            return;
+        }
+
+        m_saleOrder->extension["originalOrderAmount"] = m_saleOrder->orderAmount;
+        m_saleOrder->orderAmount = wholeOrderChangeAmt;
+        onSubmitSaleOrder(0, deliveryFeesAmt, remarkText);
+    }
+
     void BusinessManager::onSubmitSaleOrder(qint64 wholeOrderPromoAmt, qint64 deliveryFeesAmt, const QString& remarkText)
     {
         if(!m_saleOrder)
@@ -773,6 +791,7 @@ namespace Core
         request->SetDeliveryFeesAmount(deliveryFeesAmt);
         request->SetWholeOrderPromotionAmount(m_saleOrder->wholeOrderPromoAmount);
         request->SetOrderRemark(remarkText);
+        request->SetOrderExtension(m_saleOrder->extension);
         auto urlParam = Base::GetService<Core::UrlManager>()->GetUrl(Core::UrlManager::HYTRADE_INFO);
         request->SetUrl(urlParam.url);
         request->SetTimeout(urlParam.timeout);
@@ -1024,12 +1043,12 @@ namespace Core
         Net::HttpModule::Get()->ProcessRequest(request, response, true);
         if(response->IsOk())
         {
-            LOG_INFO(QStringLiteral("---------订单出库成功-----------"));
+            LOG_INFO(QStringLiteral("---------订单出库或者更新成功-----------"));
             emit signalModifyStockOrderSuccess();
         }
         else
         {
-            LOG_INFO(QStringLiteral("---------订单出库失败-----------"));
+            LOG_INFO(QStringLiteral("---------订单出库或者更新失败-----------"));
             message = response->GetErrorMessage();
             emit signalModifyStockOrderError(message, operateType);
         }

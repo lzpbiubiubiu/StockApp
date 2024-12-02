@@ -35,7 +35,10 @@ namespace UI
             DISABLE_ROLE,
 
             /** 赠品 */
-            GIFTS_ROLE
+            GIFTS_ROLE,
+
+            /** 商品图片 */
+            IMG_ROLE
         };
 
         /** 商品列表项 */
@@ -59,6 +62,9 @@ namespace UI
             /** 赠品 */
             bool gifts = false;
 
+            /** 图片 */
+            QString imgPath;
+
             /** 是否禁用 */
             bool disable = false;
         };
@@ -80,6 +86,9 @@ namespace UI
 
         /** 清空商品 */
         void ClearItems();
+
+        /** 通过url获取本地图片路径 */
+        QString LoadLocalWare(const QString &uri);
 
         /** 获取商品列表 */
         const QList<SaleWareItem>& GetSaleWares() const;

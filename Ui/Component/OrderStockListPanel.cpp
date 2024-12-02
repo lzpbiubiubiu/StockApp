@@ -2,6 +2,7 @@
 #include "Base/Common/ServiceManager.h"
 #include "Core/BusinessManager.h"
 #include "Base/Util/PriceUtil.h"
+#include "Base/Util/JsonUtil.h"
 #include "Application.h"
 
 namespace UI
@@ -141,6 +142,19 @@ namespace UI
         SetCurrentOrder(orderItem);
     }
 
+    void OrderStockListPanel::updateStockOrder(int orderIndex, const QString& orderRemark)
+    {
+        if(orderIndex < 0 || orderIndex >= m_stockOrders.size())
+            return;
+
+        auto orderItem = m_stockOrders[orderIndex];
+        auto extensionObj = Base::JsonUtil::ToJsonObject(orderItem->extension);
+        extensionObj["orderRemark"] = orderRemark;
+        orderItem->extension = Base::JsonUtil::ToString(extensionObj);
+        SetOrderModel();
+        SetCurrentOrder(orderItem);
+    }
+
     void OrderStockListPanel::clickOrderDetail(int orderIndex)
     {
         if(orderIndex < 0 || orderIndex >= m_stockOrders.size())
@@ -183,6 +197,7 @@ namespace UI
         obj["orderAmt"] = Base::PriceUtil::FenToString(stockOrder->orderAmount);
         obj["totalPromotionAmt"] = Base::PriceUtil::FenToString(stockOrder->totalPromotionAmount);
         obj["deliveryFreeAmt"] = Base::PriceUtil::FenToString(stockOrder->deliveryFreeAmount);
+        obj["orderRemark"] = Base::JsonUtil::ToJsonObject(stockOrder->extension)["orderRemark"].toString();
         QJsonArray wareArray;
         int piece = 0;
         int kind = 0;

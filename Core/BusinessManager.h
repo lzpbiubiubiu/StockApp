@@ -92,6 +92,9 @@ namespace Core
         /** 提交出库订单 */
         void SubmitSaleOrder(qint64 wholeOrderPromoAmt, qint64 deliveryFeesAmt, const QString& remarkText);
 
+        /** 订单整单改价提交 */
+        void OrderChangeSubmit(qint64 wholeOrderChangeAmt, qint64 deliveryFeesAmt, const QString& remarkText);
+
         /** 更新app缓存 */
         void UpdateAppCache(const QString& ip, int port);
 
@@ -145,6 +148,7 @@ namespace Core
         Q_INVOKABLE void onUpdateSaleWareItem(int index, ItemAction action, const QVariantList& values);
         Q_INVOKABLE void onDeleteSaleWareItem(int index);
         Q_INVOKABLE void onSubmitSaleOrder(qint64 wholeOrderPromoAmt, qint64 deliveryFeesAmt, const QString& remarkText);
+        Q_INVOKABLE void onOrderChangeSubmit(qint64 wholeOrderChangeAmt, qint64 deliveryFeesAmt, const QString& remarkText);
         Q_INVOKABLE void onUpdateAppCache(const QString& ip, int port);
         Q_INVOKABLE void onConfigWareStorage(Core::WareItemPtr item, StorageOperate operate);
         Q_INVOKABLE void onQueryOrderReport(const QDateTime& date);

@@ -1,5 +1,6 @@
 ﻿import QtQml 2.12
 import QtQuick 2.12
+import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Component 1.0
 import Other 1.0
@@ -18,7 +19,10 @@ UIDrawer {
         PAGE_ORDER_STOCK_LIST = 0,
 
         /** 订单详情页面 */
-        PAGE_ORDER_DETAIL
+        PAGE_ORDER_DETAIL,
+
+        /** 订单备注 */
+        PAGE_ORDER_REMARK
     }
 
     /** 当前订单列表选择序号 */
@@ -35,7 +39,17 @@ UIDrawer {
     onSignalClosed: page.orderStockListPanel.resetProperty()
 
     //内容区域
-    contentItem: OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL === page.orderStockListPanel.pageIndex ? orderDetailContent : orderContent
+    contentItem: {
+        if(OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL === page.orderStockListPanel.pageIndex){
+            orderDetailContent
+        }
+        else if(OrderStockListPanel.PageIndex.PAGE_ORDER_REMARK === page.orderStockListPanel.pageIndex){
+            remarkInputContent
+        }
+        else{
+            orderContent
+        }
+    }
 
     // 订单备货清单
     Component {
@@ -553,6 +567,29 @@ UIDrawer {
 
                 Text {
                     font.pixelSize: 10
+                    font.weight: Font.Medium
+                    font.family: UIConfig.fontFamily
+                    Layout.fillWidth: true
+                    Layout.topMargin: 8
+                    Layout.leftMargin: 8
+                    Layout.rightMargin: 8
+                    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+                    elide: Text.ElideRight
+                    maximumLineCount: 3
+                    color: "#0F172A"
+                    textFormat: Text.RichText
+                    text: "" === page.orderStockListPanel.currentOrder.orderRemark ? "订单备注: <span style='color:#DCDCDC'>%1</span>".arg("无备注") : "订单备注: " + page.orderStockListPanel.currentOrder.orderRemark
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                           page.orderStockListPanel.pageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_REMARK
+                        }
+                    }
+                }
+
+                Text {
+                    font.pixelSize: 10
                     font.weight: Font.Bold
                     font.family: UIConfig.fontFamily
                     Layout.topMargin: 8
@@ -779,12 +816,12 @@ UIDrawer {
                         }
                     }
 
-                    Rectangle {
+                    Item {
                         id: rec
                         anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 16
+                        anchors.bottomMargin: 12
                         width: parent.width
-                        height: 40
+                        height: 36
                         z: 1
 
                         RowLayout {
@@ -835,6 +872,204 @@ UIDrawer {
                             }
                         }
 
+                    }
+                }
+            }
+        }
+    }
+
+    // 订单备注
+    Component {
+        id: remarkInputContent
+
+        Rectangle {
+            width: root.width
+            height: root.height * 0.95
+            radius: 8
+            clip: true
+            color: "#FFFFFF"
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    if (!textArea.containsMouse) {
+                        textArea.focus = false
+                        mainWindow.hideKeyboard()
+                    }
+
+                }
+            }
+
+            ColumnLayout {
+                anchors.fill: parent
+                spacing: 1
+
+                Item {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 40
+
+                    UIImageButton {
+                        id: backButton
+
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        imageSource: "qrc:/Resources/Images/back_arraow.svg"
+                        imageHoverSource: "qrc:/Resources/Images/back_arraow.svg"
+                        imagePressSource: "qrc:/Resources/Images/back_arraow.svg"
+
+                        onSignalClicked: {
+                            page.orderStockListPanel.pageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL
+                        }
+                    }
+
+                    Text {
+                        anchors.centerIn: parent
+                        width: parent.width - 50
+                        text: "订单备注"
+                        elide: Text.ElideRight
+                        font.family: UIConfig.fontFamily
+                        font.pixelSize: 14
+                        font.weight: Font.Bold
+                        color: "#000000"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    UIImageButton {
+                        id: cancelButton
+
+                        anchors.right: parent.right
+                        anchors.rightMargin: 10
+                        width: 40
+                        height: 40
+                        anchors.verticalCenter: parent.verticalCenter
+                        imageSource: "qrc:/Resources/Images/panel_header_close.svg"
+                        imageHoverSource: "qrc:/Resources/Images/panel_header_close.svg"
+                        imagePressSource: "qrc:/Resources/Images/panel_header_close.svg"
+
+                        onSignalClicked: root.close()
+                    }
+                }
+
+                Item {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+
+                    ColumnLayout {
+                        anchors.fill: parent
+                        anchors.topMargin: 12
+                        spacing: 0
+
+                        Rectangle {
+                            id: rectangle
+                            color: "#EFF1F6"
+                            border.color: "#F5F5F5"
+                            border.width: 1
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 80
+                            Layout.rightMargin: 12
+                            Layout.leftMargin: 12
+                            radius: 2
+
+                            RowLayout{
+                                anchors.fill: parent
+                                spacing: 0
+
+                                // 输入框
+                                TextArea {
+                                    id: textArea
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    Layout.margins: 4
+                                    clip: true
+                                    wrapMode: TextEdit.Wrap
+                                    placeholderText: "请输入信息"
+                                    selectionColor: "#0078D7"
+                                    selectedTextColor: "white"
+                                    text: page.orderStockListPanel.currentOrder.orderRemark
+                                    horizontalAlignment: TextInput.AlignLeft
+                                    background: Rectangle {
+                                        border.width: 1
+                                        opacity: 0
+                                    }
+                                    padding:0
+                                    color:"#0F172A"
+                                    font.pixelSize: 12
+                                    font.family: UIConfig.fontFamily
+                                    font.weight: Font.Bold
+                                    selectByMouse: true
+
+                                    onTextChanged: {
+                                    }
+
+                                    //焦点变化
+                                    onActiveFocusChanged: {
+                                    }
+
+                                    Keys.priority: Keys.AfterItem
+
+                                    // 按下回车键
+                                    Keys.onEnterPressed: {
+                                    }
+
+                                    Keys.onReturnPressed: {
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            Layout.fillHeight: true
+                            Layout.fillWidth: true
+                        }
+
+                        Item {
+                            Layout.preferredHeight: 35
+                            Layout.fillWidth: true
+                            Layout.bottomMargin: 20
+                            Layout.topMargin: 12
+
+                            RowLayout {
+                                anchors.fill: parent
+                                spacing: 20
+
+                                Item {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                }
+
+                                UIButton {
+                                    id: acceptButton
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: 200
+                                    radius: 15
+                                    text: "确定"
+                                    textColor: "#FFFFFF"
+                                    fontWeight: Font.Bold
+                                    fontSize: 14
+                                    color: "#315EFB"
+
+                                    onClicked: {
+                                        page.orderStockListPanel.updateStockOrder(root.__currentListIndex, textArea.text)
+                                        page.orderStockListPanel.pageIndex = OrderStockListPanel.PageIndex.PAGE_ORDER_DETAIL
+                                    }
+                                }
+
+                                Item {
+                                    Layout.fillHeight: true
+                                    Layout.fillWidth: true
+                                }
+                            }
+
+                        }
+
+                        Item {
+                            id: itemId
+                            Layout.preferredHeight: root.height * 0.45
+                            Layout.fillWidth: true
+                            visible: mainWindow.showKeyboard
+                        }
                     }
                 }
             }

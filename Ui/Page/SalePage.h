@@ -11,6 +11,7 @@ namespace UI
         Q_PROPERTY(QObject* saleWarePanel MEMBER m_saleWarePanel CONSTANT)
         Q_PROPERTY(qint64 orderAmount READ GetOrderAmount NOTIFY signalOrderAmountChanged)
         Q_PROPERTY(qint64 promotionAmount READ GetPromotionAmount NOTIFY signalPromotionAmountChanged)
+        Q_PROPERTY(bool wholeSaleOrder READ GetWholeSaleOrder NOTIFY signalWholeSaleOrderChanged)
         Q_PROPERTY(bool hasTradeWare READ GetHasTradeWare NOTIFY signalHasTradeWareChanged)
         DECLARE_PAGE()
 
@@ -39,6 +40,10 @@ namespace UI
         void SetPromotionAmount(qint64 amount);
         qint64 GetPromotionAmount() const;
 
+        /** 设置|获取出库订单是否是批发订单 */
+        void SetWholeSaleOrder(bool wholeSaleOrder);
+        bool GetWholeSaleOrder() const;
+
         /** 设置|获取数据模型 */
         void SetHasTradeWare(bool hasTradeWare);
         bool GetHasTradeWare();
@@ -47,6 +52,7 @@ namespace UI
         void signalOrderAmountChanged();
         void signalHasTradeWareChanged();
         void signalPromotionAmountChanged();
+        void signalWholeSaleOrderChanged();
 
     private:
 
@@ -61,5 +67,8 @@ namespace UI
 
         // 是否有异常商品
         bool m_hasTradeWare = false;
+
+        // 是否批发订单
+        bool m_wholeSaleOrder = false;
     };
 } // namespace UI

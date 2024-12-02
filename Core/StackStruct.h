@@ -254,6 +254,7 @@ namespace Core
         QJsonObject ToPushJsonObj() const
         {
             QJsonObject pushObj;
+            //不需要在备货清单里边修改订单销售相关数据
             pushObj["orderAmount"] = orderAmount;
             pushObj["totalPromotionAmount"] = totalPromotionAmount;
             QJsonArray wareArray;
@@ -266,6 +267,8 @@ namespace Core
                 wareArray.append(wareObj);
             }
             pushObj["wares"] = wareArray;
+
+            pushObj["extension"] = extension;
             return pushObj;
         }
         Q_GADGET

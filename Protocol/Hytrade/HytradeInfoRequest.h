@@ -37,6 +37,9 @@ namespace Net
         /** 设置订单备注 */
         void SetOrderRemark(const QString& text);
 
+        /** 设置订单扩展信息 */
+        void SetOrderExtension(const QJsonObject& extension);
+
         /** 设置订单类型 */
         void SetOrderType(int type);
     protected:
@@ -63,6 +66,9 @@ namespace Net
 
         /** 订单配送费 */
         qint64 m_deliveryFeesAmount = 0;
+
+        /** 订单备注 */
+        QString m_orderRemark;
 
         /** 订单扩展数据 */
         QJsonObject m_extension;

@@ -143,6 +143,12 @@ namespace UI
         m_businessManager->SubmitSaleOrder(wholeOrderPromoAmt, deliveryFeesAmt, remarkText);
     }
 
+    void SalePageController::orderChangeSubmit(qint64 wholeOrderChangeAmt, qint64 deliveryFeesAmt, const QString& remarkText)
+    {
+        UI::Application::Get()->GetMainWindow()->ShowLoading();
+        m_businessManager->OrderChangeSubmit(wholeOrderChangeAmt, deliveryFeesAmt, remarkText);
+    }
+
     void SalePageController::onSubmitSaleOrderSuccess()
     {
         UI::Application::Get()->GetMainWindow()->CloseLoading();

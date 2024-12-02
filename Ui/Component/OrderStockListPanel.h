@@ -15,7 +15,10 @@ namespace UI
             PAGE_ORDER_STOCK_LIST = 0,
 
             /** 订单详情页面 */
-            PAGE_ORDER_DETAIL
+            PAGE_ORDER_DETAIL,
+
+            /** 订单备注 */
+            PAGE_ORDER_REMARK
         };
 
         Q_OBJECT
@@ -65,6 +68,9 @@ namespace UI
 
         /** 更新备货订单 */
         Q_INVOKABLE void updateStockOrder(int orderIndex, int wareIndex, int wareCount);
+
+        /** 更新备货订单 */
+        Q_INVOKABLE void updateStockOrder(int orderIndex, const QString& orderRemark);
 
         /** 选择当前的订单明细 */
         Q_INVOKABLE void clickOrderDetail(int orderIndex);

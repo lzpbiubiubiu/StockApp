@@ -86,6 +86,8 @@ namespace Core
         entity->SetDiscountPrice(item->discountPrice);
         entity->SetPromotionAmount(item->promotionAmount);
         entity->SetStock(item->stock);
+        entity->SetImageUrl(item->imageUrl);
+        entity->SetImageMd5(item->imageMd5);
         QMetaEnum saleModeMetaEnum = QMetaEnum::fromType<Core::WareItem::WareType>();
         item->extension["wareType"] = saleModeMetaEnum.valueToKey(item->wareType);
         item->extension["retailPrice"] = item->retailPrice;
@@ -107,6 +109,8 @@ namespace Core
         item->discountPrice = entity->GetDiscountPrice();
         item->promotionAmount = entity->GetPromotionAmount();
         item->stock = entity->GetStock();
+        item->imageUrl = entity->GetImageUrl();
+        item->imageMd5 = entity->GetImageMd5();
         item->extension = Base::JsonUtil::ToJsonObject(entity->GetExtension());
         QMetaEnum saleModeMetaEnum = QMetaEnum::fromType<Core::WareItem::WareType>();
         item->wareType = static_cast<Core::WareItem::WareType>(saleModeMetaEnum.keyToValue(item->extension["wareType"].toString().toUtf8()));

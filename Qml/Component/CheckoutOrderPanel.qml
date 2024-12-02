@@ -11,7 +11,9 @@ import Other 1.0
  * 用户参数:
  * userData.orderAmount 订单总金额
  * userData.promotionAmount 订单促销金额
+ * userData.wholeSaleOrder 批发订单
  * 返回输入参数:
+ * __inputData.wholeOrderChangeAmt 订单金额
  * __inputData.wholeOrderPromoAmt 整单优惠金额
  * __inputData.deliveryFeesAmt 自主配送费
  * __inputData.remarkText 订单备注信息
@@ -24,6 +26,9 @@ UIDrawer {
 
         /** 主功能 */
         TYPE_MAIN = 0,
+
+        /** 整单改价输入 */
+        TYPE_WHOLE_ORDER_CHANGE,
 
         /** 整单优惠输入 */
         TYPE_WHOLE_ORDER_PROMO,
@@ -55,6 +60,7 @@ UIDrawer {
 
     Component.onCompleted: {
         root.__inputData = {}
+        root.__inputData.wholeOrderChangeAmt = userData.orderAmount
         root.__inputData.wholeOrderPromoAmt = 0
         root.__inputData.deliveryFeesAmt = 0
         root.__inputData.remarkText = ""
@@ -62,7 +68,8 @@ UIDrawer {
 
     //内容区域
     contentItem: {
-        if(CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_PROMO === root.__funcType
+        if(CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_CHANGE === root.__funcType
+           || CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_PROMO === root.__funcType
            || CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType)
         {
             amountInputContent
@@ -131,11 +138,13 @@ UIDrawer {
                         anchors.topMargin: 16
                         spacing: 1
 
+                        // 整单优惠项
                         Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 20
                             Layout.leftMargin: 8
                             Layout.rightMargin: 8
+                            visible: !userData.wholeSaleOrder
 
                             Text {
                                 height: parent.height
@@ -199,7 +208,7 @@ UIDrawer {
                             }
                         }
 
-
+                        // 订单自主配送费项
                         Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 20
@@ -268,6 +277,7 @@ UIDrawer {
                             }
                         }
 
+                        // 订单备注项
                         Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 20
@@ -275,6 +285,7 @@ UIDrawer {
                             Layout.rightMargin: 8
 
                             Text {
+                                id: remarkTitle
                                 height: parent.height
                                 anchors.left: parent.left
                                 font.pixelSize: 12
@@ -288,6 +299,7 @@ UIDrawer {
 
                             Text {
                                 height: parent.height
+                                width: parent.width - (remarkTitle.width + icon3.width + 20)
                                 anchors.right: icon3.left
                                 anchors.rightMargin: 4
                                 font.pixelSize: 12
@@ -295,7 +307,7 @@ UIDrawer {
                                 font.weight: Font.Medium
                                 horizontalAlignment: Text.AlignRight
                                 verticalAlignment: Text.AlignBottom
-                                textFormat: Text.RichText
+                                elide: Text.ElideRight
                                 color: {
                                     var itemData = root.__inputData.remarkText
                                     if(typeof itemData === 'undefined' || "" === itemData) {
@@ -390,6 +402,23 @@ UIDrawer {
                             text: "优惠减:￥" + (userData.promotionAmount / 100).toFixed(2)
                         }
 
+                        MouseArea {
+                            anchors.fill: parent
+                            onClicked: {
+                                if(!userData.wholeSaleOrder)
+                                    return
+
+                                root.__funcType = CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_CHANGE
+                                var itemData = root.__inputData.wholeOrderChangeAmt
+                                if(typeof itemData !== 'undefined') {
+                                   root.__inputText = (itemData / 100).toFixed(2)
+                                }
+                                else{
+                                    root.__inputText = ""
+                                }
+                            }
+                        }
+
                      }
 
                      UIButton {
@@ -466,7 +495,17 @@ UIDrawer {
                     Text {
                         anchors.centerIn: parent
                         width: parent.width - 50
-                        text: CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType ? "自主配送费" : "整单优惠金额"
+                        text: {
+                            if(CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType){
+                                "自主配送费"
+                            }
+                            else if(CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_CHANGE === root.__funcType){
+                                "整单改价"
+                            }
+                            else{
+                                "整单优惠金额"
+                            }
+                        }
                         elide: Text.ElideRight
                         font.family: UIConfig.fontFamily
                         font.pixelSize: 14
@@ -512,8 +551,20 @@ UIDrawer {
                             font.pixelSize: 12
                             font.family: UIConfig.fontFamily
                             font.weight: Font.Bold
-                            text: CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType || CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_PROMO === root.__funcType ? root.__inputText : ""
-                            placeholderText: CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType ? "请输入自主配送费用" : "请输入需要优惠的金额"
+                            text: (CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType
+                                   || CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_PROMO === root.__funcType
+                                   || CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_CHANGE === root.__funcType) ? root.__inputText : ""
+                            placeholderText: {
+                                if(CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType){
+                                    "请输入自主配送费用"
+                                }
+                                else if(CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_CHANGE === root.__funcType){
+                                    "请输入整单改价的金额"
+                                }
+                                else{
+                                    "请输入整单优惠的金额"
+                                }
+                            }
                             validator: RegExpValidator{regExp: /(0|[1-9]\d{0,7})(\.)\d{0,2}$/}
 
                             //焦点变化
@@ -607,17 +658,22 @@ UIDrawer {
                     errorText.text = "请输入有效金额"
                     return
                 }
+                if(CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_CHANGE === root.__funcType)
+                {
+                    root.__inputData["wholeOrderChangeAmt"] = input * 100
+                    root.userData.orderAmount = input * 100
+                }
                 if(CheckoutOrderPanel.FuncType.TYPE_WHOLE_ORDER_PROMO === root.__funcType)
                 {
                     var amount = input * 100
                     if(amount > root.userData.orderAmount)
                     {
-                        errorText.text = "请输入合理的优惠金额"
+                        errorText.text = "请输入合理的金额"
                         return
                     }
-                    root.__inputData["wholeOrderPromoAmt"] = input * 100
-                    root.userData.orderAmount -= input * 100
-                    root.userData.promotionAmount += input * 100
+                    root.__inputData["wholeOrderPromoAmt"] = amount
+                    root.userData.orderAmount -= amount
+                    root.userData.promotionAmount += amount
                 }
                 else if(CheckoutOrderPanel.FuncType.TYPE_DELIVERY_FEES === root.__funcType)
                 {

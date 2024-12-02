@@ -30,6 +30,9 @@ namespace UI
         /** 出库订单结算 */
         Q_INVOKABLE void submitOrder(qint64 wholeOrderPromoAmt = 0, qint64 deliveryFeesAmt = 0, const QString& remarkText = "");
 
+        /** 整单改价提交结算 */
+        Q_INVOKABLE void orderChangeSubmit(qint64 wholeOrderChangeAmt = 0, qint64 deliveryFeesAmt = 0, const QString& remarkText = "");
+
         /** 删除错误商品 */
         Q_INVOKABLE void deleteErrorWares();
 

@@ -50,7 +50,12 @@ namespace Net
 
     void HytradeInfoRequest::SetOrderRemark(const QString& text)
     {
-        m_extension["orderRemark"] = text;
+        m_orderRemark = text;
+    }
+
+    void HytradeInfoRequest::SetOrderExtension(const QJsonObject& extension)
+    {
+        m_extension = extension;
     }
 
     void HytradeInfoRequest::SetOrderType(int type)
@@ -110,6 +115,7 @@ namespace Net
         }
         ASSIGN_FROM_INT64(val, "deliveryFeesAmount", m_deliveryFeesAmount);
         ASSIGN_FROM_ARRAY(val, "promotions", promoArr);
+        m_extension["orderRemark"] = m_orderRemark;
         ASSIGN_FROM_OBJECT(val, "extension", m_extension);
         ASSIGN_FROM_STRING(val, "uniqueId", GetTraceNumber());
     }

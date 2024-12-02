@@ -52,6 +52,20 @@ namespace UI
         return m_promotionAmount;
     }
 
+    void SalePage::SetWholeSaleOrder(bool wholeSaleOrder)
+    {
+        if(m_wholeSaleOrder != wholeSaleOrder)
+        {
+            m_wholeSaleOrder = wholeSaleOrder;
+            emit signalWholeSaleOrderChanged();
+        }
+    }
+
+    bool SalePage::GetWholeSaleOrder() const
+    {
+        return m_wholeSaleOrder;
+    }
+
     void SalePage::SetHasTradeWare(bool hasTradeWare)
     {
         if(m_hasTradeWare != hasTradeWare)
@@ -74,11 +88,13 @@ namespace UI
         {
             SetOrderAmount(saleOrder->orderAmount);
             SetPromotionAmount(saleOrder->promotionAmount + saleOrder->wholeOrderPromoAmount);
+            SetWholeSaleOrder(Core::Order::OrderType::WHOLESALE == saleOrder->type);
         }
         else
         {
             SetOrderAmount(0);
             SetPromotionAmount(0);
+            SetWholeSaleOrder(false);
         }
 
         SetHasTradeWare(false);

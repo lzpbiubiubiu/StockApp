@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QtMath>
 #include "Base/Common/ServiceManager.h"
+#include "Base/Util/PathUtil.h"
 #include "Base/Util/PriceUtil.h"
 #include "Core/BusinessManager.h"
 
@@ -60,6 +61,7 @@ namespace UI
             it.count = QString::number(item->count);
             it.price = Base::PriceUtil::FenToString(item->discountPrice);
             it.gifts = (Core::WareItem::WareType::WARE_TYPE_GIFT == item->wareType);
+            it.imgPath = LoadLocalWare(item->imageUrl);
             auto modelIndex = QAbstractListModel::index(index);
             emit dataChanged(modelIndex, modelIndex);
         }
@@ -109,6 +111,9 @@ namespace UI
         case ItemRole::GIFTS_ROLE:
             value = itemData.gifts;
             break;
+        case ItemRole::IMG_ROLE:
+            value = itemData.imgPath;
+            break;
         default:
             break;
         }
@@ -125,6 +130,7 @@ namespace UI
         roles[ItemRole::STOCK_ROLE] = "stock";
         roles[ItemRole::DISABLE_ROLE] = "disable";
         roles[ItemRole::GIFTS_ROLE] = "gifts";
+        roles[ItemRole::IMG_ROLE] = "imgPath";
         return roles;
     }
 
@@ -141,6 +147,21 @@ namespace UI
         }
 
         return index;
+    }
+
+    QString SaleWarePanelModel::LoadLocalWare(const QString &uri)
+    {
+        QString path = Base::PathUtil::GetAssetsDir().append("wareImage/");
+        QUrl url(uri);
+        if(url.isValid())
+        {
+            QString fileName = url.fileName();
+            if(QFile::exists(path + fileName))
+            {
+                return "file:///" + path + fileName;
+            }
+        }
+        return "qrc:/Resources/Images/default_ware.svg";
     }
 
     SaleWarePanel::SaleWarePanel(QObject* parent)
@@ -169,6 +190,7 @@ namespace UI
         wareItem.count = QString::number(item->count);
         wareItem.stock = QString::number(item->stock);
         wareItem.gifts = (Core::WareItem::WareType::WARE_TYPE_GIFT == item->wareType);
+        wareItem.imgPath = m_modelData->LoadLocalWare(item->imageUrl);
         return wareItem;
     }
 
@@ -219,8 +241,8 @@ namespace UI
     QList<SaleWarePanelModel::SaleWareItem> SaleWarePanel::GetTradeErrorWares()
     {
         QList<SaleWarePanelModel::SaleWareItem> errorWares;
-        auto& wares = m_modelData->GetSaleWares();
-        for(auto item : wares)
+        const auto& wares = m_modelData->GetSaleWares();
+        for(const auto& item : wares)
         {
             if(item.disable)
                 errorWares << item;

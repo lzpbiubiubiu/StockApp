@@ -90,29 +90,30 @@ Page {
                                        id: wareImage
                                        anchors.centerIn: parent
                                        width: parent.width
-                                       source: "qrc:/Resources/Images/default_ware.svg"
+                                       height: parent.height
+                                       source: imgPath//"qrc:/Resources/Images/default_ware.svg"
                                    }
 
-                                  Rectangle {
-                                     anchors.centerIn: parent
-                                     width: wareImage.width - 8
-                                     height: 20
-                                     radius: 10
-                                     visible: disable
-                                     color: "#FF0000"
-                                     opacity: 0.7
+                                   Rectangle {
+                                       anchors.centerIn: parent
+                                       width: wareImage.width - 8
+                                       height: 20
+                                       radius: 10
+                                       visible: disable
+                                       color: "#FF0000"
+                                       opacity: 0.7
 
-                                     Text {
-                                         anchors.centerIn: parent
-                                         font.pixelSize: 12
-                                         font.family: UIConfig.fontFamily
-                                         font.weight: Font.Bold
-                                         horizontalAlignment: Text.AlignHCenter
-                                         verticalAlignment: Text.AlignVCenter
-                                         color: "#FFFFFF"
-                                         text: "库存不足"
-                                     }
-                                  }
+                                       Text {
+                                           anchors.centerIn: parent
+                                           font.pixelSize: 12
+                                           font.family: UIConfig.fontFamily
+                                           font.weight: Font.Bold
+                                           horizontalAlignment: Text.AlignHCenter
+                                           verticalAlignment: Text.AlignVCenter
+                                           color: "#FFFFFF"
+                                           text: "库存不足"
+                                       }
+                                   }
                                }
 
                                Item {
@@ -578,9 +579,14 @@ Page {
     /** 显示检查订单面板 */
     function showCheckoutOrderPanel() {
         var json = {
-            "userData": {"orderAmount": page.orderAmount, "promotionAmount": page.promotionAmount},
+            "userData": {"orderAmount": page.orderAmount, "promotionAmount": page.promotionAmount, "wholeSaleOrder": page.wholeSaleOrder},
             "accept": function(returnData) {
-                page.controller.submitOrder(returnData.wholeOrderPromoAmt, returnData.deliveryFeesAmt, returnData.remarkText)
+                if(page.wholeSaleOrder){
+                    page.controller.orderChangeSubmit(returnData.wholeOrderChangeAmt, returnData.deliveryFeesAmt, returnData.remarkText)
+                }
+                else{
+                    page.controller.submitOrder(returnData.wholeOrderPromoAmt, returnData.deliveryFeesAmt, returnData.remarkText)
+                }
             }
         }
         var component = Qt.createComponent("qrc:/Qml/Component/CheckoutOrderPanel.qml")
